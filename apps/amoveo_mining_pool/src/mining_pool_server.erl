@@ -82,17 +82,5 @@ talk_helper(Data, Peer, N) ->
                      1=2
             end
     end.
-slice(Bin, Char) ->
-    slice(Bin, Char, 0).
-slice(Bin, Char, N) ->
-    NN = N*8,
-    <<First:NN, Char2:8, Second/binary>> = Bin,
-    if
-        N > size(Bin) -> 1=2;
-        (Char == Char2) ->
-            {<<First:NN>>, Second};
-        true ->
-            slice(Bin, Char, N+1)
-    end.
 unpack_mining_data([Hash, Nonce, Difficulty]) ->
     {Hash, Nonce, Difficulty}.
