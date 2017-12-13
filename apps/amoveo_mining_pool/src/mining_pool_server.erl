@@ -30,9 +30,7 @@ time_now() ->
     element(2, now()).
 new_problem_internal() ->
     Data = {mining_data},
-    R = talk_helper(Data, ?FullNode, 10),
-    
-    {F, S, Third} = unpack_mining_data(R),
+    [F, S, Third] = talk_helper(Data, ?FullNode, 10),
     #data{hash = F, nonce = S, diff = Third, time = time_now()}.
 problem() -> gen_server:call(?MODULE, problem).
 new_problem() -> gen_server:call(?MODULE, new_problem).
@@ -57,7 +55,6 @@ receive_work(Nonce, Pubkey) ->
                     "found work";
         true -> "invalid work"
     end.
-request_new_problem() ->
 found_block(<<Nonce:256>>) ->
     BinNonce = base64:encode(<<Nonce:256>>),
     Data = {mining_data, <<Nonce:256>>},
@@ -66,7 +63,9 @@ found_block(<<Nonce:256>>) ->
     ok.
     
 talk_helper2(Data, Peer) ->
-    httpc:request(post, {Peer, [], "application/octet-stream", iolist_to_binary(packer:pack(Data))}, [{timeout, 3000}], []).
+    D2 = iolist_to_binary(packer:pack(Data)),
+    D3 = httpc:request(post, {Peer, [], "application/octet-stream", D2}, [{timeout, 3000}], []),
+    packer:unpack(D3).
 talk_helper(Data, Peer, N) ->
     if 
         N == 0 -> 
@@ -82,5 +81,3 @@ talk_helper(Data, Peer, N) ->
                      1=2
             end
     end.
-unpack_mining_data([Hash, Nonce, Difficulty]) ->
-    {Hash, Nonce, Difficulty}.
