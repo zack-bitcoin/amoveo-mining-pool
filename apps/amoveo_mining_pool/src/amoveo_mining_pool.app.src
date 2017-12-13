@@ -5,10 +5,13 @@
   {mod, { amoveo_mining_pool_app, []}},
   {applications,
    [kernel,
+    stdlib,
     ssl,
     inets,
+    %jiffy,
     cowboy,
-    stdlib
+    encrypter,
+    pink_hash
    ]},
   {env,[]},
   {modules, []},

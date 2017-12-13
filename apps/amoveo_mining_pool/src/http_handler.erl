@@ -4,7 +4,7 @@ init(_Type, Req, _Opts) -> {ok, Req, no_state}.
 terminate(_Reason, _Req, _State) -> ok.
 handle(Req, State) ->
     {ok, Data0, Req2} = cowboy_req:body(Req),
-    {{IP, _}, Req3} = cowboy_req:peer(Req2),
+    {{_IP, _}, Req3} = cowboy_req:peer(Req2),
     Data = packer:unpack(Data0),
     D0 = doit(Data),
     D = packer:pack(D0),

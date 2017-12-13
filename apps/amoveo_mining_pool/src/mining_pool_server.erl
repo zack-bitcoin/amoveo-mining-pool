@@ -3,7 +3,7 @@
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
         start_cron/0, problem/0, receive_work/2]).
 -define(FullNode, "http://localhost:8081/").
--record(data, {hash, nonce, diff, time})
+-record(data, {hash, nonce, diff, time}).
 -define(RefreshPeriod, 20).%in seonds. How often we get a new problem from the node to work on.
 init(ok) -> {ok, new_problem_internal()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
@@ -11,18 +11,17 @@ code_change(_OldVsn, State, _Extra) -> {ok, State}.
 terminate(_, _) -> io:format("died!"), ok.
 handle_info(_, X) -> {noreply, X}.
 handle_cast(new_problem_cron, Y) -> 
-    N = time_now()
+    N = time_now(),
     T = Y#data.time,
     X = if 
-            (N-T) > ?RefreshPeriod -> 
+            ((N-T) > ?RefreshPeriod) -> 
                 new_problem_internal();
-            true ->
-                Y
+            true -> Y
         end,
     {noreply, X};
 handle_cast(_, X) -> {noreply, X}.
 handle_call(problem, _From, X) -> {reply, X, X};
-handle_call(new_problem, _From, Y) -> 
+handle_call(new_problem, _From, _) -> 
     X = new_problem_internal(),
     {reply, X, X};
 handle_call(_, _From, X) -> {reply, X, X}.
@@ -44,8 +43,8 @@ receive_work(Nonce, Pubkey) ->
     D = problem(),
     H = D#data.hash,
     Nonce = D#data.nonce,
-    Diff = D#data.diff.
-    Y = <<Hash/binary, Diff:16, Nonce:256>>,
+    Diff = D#data.diff,
+    Y = <<H/binary, Diff:16, Nonce:256>>,
     I = pow:hash2integer(hash:doit(Y)),
     %if the work is good enough, give some money to pubkey.
     if 
