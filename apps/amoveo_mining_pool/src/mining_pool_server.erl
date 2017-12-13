@@ -31,6 +31,7 @@ time_now() ->
 new_problem_internal() ->
     Data = {mining_data},
     R = talk_helper(Data, ?FullNode, 10),
+    
     {F, S, Third} = unpack_mining_data(R),
     #data{hash = F, nonce = S, diff = Third, time = time_now()}.
 problem() -> gen_server:call(?MODULE, problem).
@@ -93,13 +94,5 @@ slice(Bin, Char, N) ->
         true ->
             slice(Bin, Char, N+1)
     end.
-unpack_mining_data(R) ->
-    <<_:(8*11), R2/binary>> = list_to_binary(R),
-    {First, R3} = slice(R2, hd("\"")),
-    <<_:(8*2), R4/binary>> = R3,
-    {Second, R5} = slice(R4, hd("\"")),
-    <<_:8, R6/binary>> = R5,
-    {Third, _} = slice(R6, hd("]")),
-    F = base64:decode(First),
-    S = base64:decode(Second),
-    {F, S, Third}.
+unpack_mining_data([Hash, Nonce, Difficulty]) ->
+    {Hash, Nonce, Difficulty}.
