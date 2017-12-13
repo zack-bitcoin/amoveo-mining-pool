@@ -3,7 +3,7 @@
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
         start_cron/0, problem/0, receive_work/2]).
 -define(FullNode, "http://localhost:8081/").
--record(data, {hash, nonce, diff, time}).
+-record(data, {hash, nonce, diff, time})
 -define(RefreshPeriod, 20).%in seonds. How often we get a new problem from the node to work on.
 init(ok) -> {ok, new_problem_internal()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
@@ -29,8 +29,8 @@ handle_call(_, _From, X) -> {reply, X, X}.
 time_now() ->
     element(2, now()).
 new_problem_internal() ->
-    Data = <<"[\"mining_data\"]">>,
-    R = talk_helper(Data, ?Peer, 10),
+    Data = {mining_data},
+    R = talk_helper(Data, ?FullNode, 10),
     {F, S, Third} = unpack_mining_data(R),
     #data{hash = F, nonce = S, diff = Third, time = time_now()}.
 problem() -> gen_server:call(?MODULE, problem).
@@ -51,19 +51,21 @@ receive_work(Nonce, Pubkey) ->
     %if the work is good enough, give some money to pubkey.
     if 
         I > Diff -> found_block(<<Nonce:256>>),
+                    Msg = {spend, Pubkey, 300000000},
+                    talk_helper(Msg, ?FullNode, 10),
                     "found work";
         true -> "invalid work"
     end.
 request_new_problem() ->
 found_block(<<Nonce:256>>) ->
     BinNonce = base64:encode(<<Nonce:256>>),
-    Data = << <<"[\"mining_data\",\"">>/binary, BinNonce/binary, <<"\"]">>/binary>>,
-    talk_helper(Data, ?Peer, 40),%spend 8 seconds checking 5 times per second if we can start mining again.
+    Data = {mining_data, <<Nonce:256>>},
+    talk_helper(Data, ?FullNode, 40),%spend 8 seconds checking 5 times per second if we can start mining again.
     new_problem(),
     ok.
     
 talk_helper2(Data, Peer) ->
-    httpc:request(post, {Peer, [], "application/octet-stream", iolist_to_binary(Data)}, [{timeout, 3000}], []).
+    httpc:request(post, {Peer, [], "application/octet-stream", iolist_to_binary(packer:pack(Data))}, [{timeout, 3000}], []).
 talk_helper(Data, Peer, N) ->
     if 
         N == 0 -> 

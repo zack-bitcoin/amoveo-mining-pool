@@ -16,6 +16,10 @@
 
 start(_StartType, _StartArgs) ->
     start_http(),
+    %spawn(fun() ->
+    %              timer:sleep(1000),
+    mining_pool_server:start_cron(),
+    %      end),
     amoveo_mining_pool_sup:start_link().
 
 %%--------------------------------------------------------------------
