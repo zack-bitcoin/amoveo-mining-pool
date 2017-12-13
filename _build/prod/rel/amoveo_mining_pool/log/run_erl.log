@@ -1,8 +1,0 @@
-run_erl [21319] Wed Dec 13 07:20:28 2017
-Args before exec of shell:
-run_erl [21319] Wed Dec 13 07:20:28 2017
-argv[0] = sh
-run_erl [21319] Wed Dec 13 07:20:28 2017
-argv[1] = -c
-run_erl [21319] Wed Dec 13 07:20:28 2017
-argv[2] = exec "/home/zack/Hacking/amoveo_c_miner/_build/prod/rel/amoveo_mining_pool/bin/amoveo_mining_pool" "console" '' 
