@@ -2,13 +2,37 @@
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2]).
 -define(FullNode, "http://localhost:8081/").
-init(ok) -> {ok, []}.
+-record(data, {hash, nonce, diff, time}).
+init(ok) -> {ok, request_new_problem()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
 terminate(_, _) -> io:format("died!"), ok.
 handle_info(_, X) -> {noreply, X}.
 handle_cast(_, X) -> {noreply, X}.
+handle_call(problem, _From, X) -> {reply, X, X};
+handle_call(new_problem, _From, _) -> 
+    X = request_new_problem(),
+    {reply, X, X};
 handle_call(_, _From, X) -> {reply, X, X}.
+
+problem() -> gen_server:call(?MODULE, problem).
+receive_work(Work, Pubkey) ->
+    D = problem(),
+    %if the work is good enough, give some money to pubkey.
+    %if the work is good enough, try to make a block.
+    % if we made a block, then we need to get a new problem
+    ok.
+request_new_problem() ->
+    Data = <<"[\"mining_data\"]">>,
+    R = talk_helper(Data, ?Peer, 10),
+    {F, S, Third} = unpack_mining_data(R),
+    X = #data{hash = F, nonce = S, diff = Third, time = now()}.
+found_block(<<Nonce:256>>) ->
+    BinNonce = base64:encode(<<Nonce:256>>),
+    Data = << <<"[\"mining_data\",\"">>/binary, BinNonce/binary, <<"\"]">>/binary>>,
+    talk_helper(Data, ?Peer, 40),%spend 8 seconds checking 5 times per second if we can start mining again.
+    ok.
+    
 talk_helper2(Data, Peer) ->
     httpc:request(post, {Peer, [], "application/octet-stream", iolist_to_binary(Data)}, [{timeout, 3000}], []).
 talk_helper(Data, Peer, N) ->
@@ -37,14 +61,6 @@ slice(Bin, Char, N) ->
             {<<First:NN>>, Second};
         true ->
             slice(Bin, Char, N+1)
-    end.
-flush() ->
-    receive
-        _ ->
-            flush()
-    after
-        0 ->
-            ok
     end.
 unpack_mining_data(R) ->
     <<_:(8*11), R2/binary>> = list_to_binary(R),
