@@ -1,1 +1,0 @@
-# amoveo-mining-pool
