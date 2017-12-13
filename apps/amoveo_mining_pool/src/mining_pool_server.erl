@@ -1,36 +1,65 @@
 -module(mining_pool_server).
 -behaviour(gen_server).
--export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2]).
+-export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
+        start_cron/0, problem/0, receive_work/2]).
 -define(FullNode, "http://localhost:8081/").
 -record(data, {hash, nonce, diff, time}).
-init(ok) -> {ok, request_new_problem()}.
+-define(RefreshPeriod, 20).%in seonds. How often we get a new problem from the node to work on.
+init(ok) -> {ok, new_problem_internal()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
 terminate(_, _) -> io:format("died!"), ok.
 handle_info(_, X) -> {noreply, X}.
+handle_cast(new_problem_cron, Y) -> 
+    N = time_now()
+    T = Y#data.time,
+    X = if 
+            (N-T) > ?RefreshPeriod -> 
+                new_problem_internal();
+            true ->
+                Y
+        end,
+    {noreply, X};
 handle_cast(_, X) -> {noreply, X}.
 handle_call(problem, _From, X) -> {reply, X, X};
-handle_call(new_problem, _From, _) -> 
-    X = request_new_problem(),
+handle_call(new_problem, _From, Y) -> 
+    X = new_problem_internal(),
     {reply, X, X};
 handle_call(_, _From, X) -> {reply, X, X}.
-
-problem() -> gen_server:call(?MODULE, problem).
-receive_work(Work, Pubkey) ->
-    D = problem(),
-    %if the work is good enough, give some money to pubkey.
-    %if the work is good enough, try to make a block.
-    % if we made a block, then we need to get a new problem
-    ok.
-request_new_problem() ->
+time_now() ->
+    element(2, now()).
+new_problem_internal() ->
     Data = <<"[\"mining_data\"]">>,
     R = talk_helper(Data, ?Peer, 10),
     {F, S, Third} = unpack_mining_data(R),
-    X = #data{hash = F, nonce = S, diff = Third, time = now()}.
+    #data{hash = F, nonce = S, diff = Third, time = time_now()}.
+problem() -> gen_server:call(?MODULE, problem).
+new_problem() -> gen_server:call(?MODULE, new_problem).
+start_cron() ->
+    %This checks every 0.1 seconds, to see if it is time to get a new problem.
+    %We get a new problem every ?RefreshPeriod.
+    gen_server:cast(?MODULE, new_problem_cron),
+    timer:sleep(100),
+    start_cron().
+receive_work(Nonce, Pubkey) ->
+    D = problem(),
+    H = D#data.hash,
+    Nonce = D#data.nonce,
+    Diff = D#data.diff.
+    Y = <<Hash/binary, Diff:16, Nonce:256>>,
+    I = pow:hash2integer(hash:doit(Y)),
+    %if the work is good enough, give some money to pubkey.
+    if 
+        I > Diff -> found_block(<<Nonce:256>>),
+                    "found work";
+        true -> "invalid work"
+    end.
+request_new_problem() ->
 found_block(<<Nonce:256>>) ->
     BinNonce = base64:encode(<<Nonce:256>>),
     Data = << <<"[\"mining_data\",\"">>/binary, BinNonce/binary, <<"\"]">>/binary>>,
     talk_helper(Data, ?Peer, 40),%spend 8 seconds checking 5 times per second if we can start mining again.
+    new_problem(),
     ok.
     
 talk_helper2(Data, Peer) ->

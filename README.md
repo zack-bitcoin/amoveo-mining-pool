@@ -7,7 +7,7 @@ A mining pool has a server. The server runs a full node of Amoveo so that they c
 
 A mining pool has workers. The workers all ask the server what to work on, and give their work to the server.
 
-If the worker's work is sufficiently high, then the server pays the worker some money.
+The server pays the worker some money.
 
 Some of the work can be used to make blocks to pay the server.
 
