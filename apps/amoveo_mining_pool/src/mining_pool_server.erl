@@ -1,10 +1,10 @@
 -module(mining_pool_server).
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
-        start_cron/0, problem/0, receive_work/2]).
+        start_cron/0, problem_api_mimic/0, receive_work/2]).
 -define(FullNode, "http://localhost:8081/").
 -record(data, {hash, nonce, diff, time}).
--define(RefreshPeriod, 20).%in seonds. How often we get a new problem from the node to work on.
+-define(RefreshPeriod, 60).%in seonds. How often we get a new problem from the node to work on.
 init(ok) -> {ok, new_problem_internal()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
@@ -29,9 +29,16 @@ time_now() ->
     element(2, now()).
 new_problem_internal() ->
     Data = {mining_data},
-    [F, S, Third] = talk_helper(Data, ?FullNode, 10),
+    {ok, [F, S, Third]} = packer:unpack(talk_helper(Data, ?FullNode, 10)),
     #data{hash = F, nonce = S, diff = Third, time = time_now()}.
 problem() -> gen_server:call(?MODULE, problem).
+problem_api_mimic() -> 
+    %looks the same as amoveo api.
+    D = problem(),
+    Hash = D#data.hash,
+    Nonce = D#data.nonce,
+    Diff = D#data.diff,
+    {ok, [Hash, Nonce, Diff]}.
 new_problem() -> gen_server:call(?MODULE, new_problem).
 start_cron() ->
     %This checks every 0.1 seconds, to see if it is time to get a new problem.
@@ -39,11 +46,12 @@ start_cron() ->
     gen_server:cast(?MODULE, new_problem_cron),
     timer:sleep(100),
     start_cron().
-receive_work(Nonce, Pubkey) ->
+receive_work(<<Nonce:256>>, Pubkey) ->
     D = problem(),
     H = D#data.hash,
-    Nonce = D#data.nonce,
     Diff = D#data.diff,
+    io:fwrite(packer:pack({recent_work, H, Diff, Nonce})),
+    io:fwrite("\n"),
     Y = <<H/binary, Diff:16, Nonce:256>>,
     I = pow:hash2integer(hash:doit(Y)),
     %if the work is good enough, give some money to pubkey.
@@ -56,15 +64,14 @@ receive_work(Nonce, Pubkey) ->
     end.
 found_block(<<Nonce:256>>) ->
     BinNonce = base64:encode(<<Nonce:256>>),
-    Data = {mining_data, <<Nonce:256>>},
+    Data = {work, <<Nonce:256>>, 0},
     talk_helper(Data, ?FullNode, 40),%spend 8 seconds checking 5 times per second if we can start mining again.
     new_problem(),
     ok.
     
 talk_helper2(Data, Peer) ->
     D2 = iolist_to_binary(packer:pack(Data)),
-    D3 = httpc:request(post, {Peer, [], "application/octet-stream", D2}, [{timeout, 3000}], []),
-    packer:unpack(D3).
+    httpc:request(post, {Peer, [], "application/octet-stream", D2}, [{timeout, 3000}], []).
 talk_helper(Data, Peer, N) ->
     if 
         N == 0 -> 

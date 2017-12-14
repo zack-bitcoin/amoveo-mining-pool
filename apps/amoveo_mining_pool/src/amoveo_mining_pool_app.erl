@@ -15,7 +15,7 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
-    io:fwrite("start amoveo 0\n"),
+    inets:start(),
     start_http(),
     spawn(fun() ->
                   timer:sleep(1000),

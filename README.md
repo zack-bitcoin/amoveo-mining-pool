@@ -13,4 +13,9 @@ Some of the work can be used to make blocks to pay the server.
 
 It uses erlang.
 
-This is a work in progress, it does not yet function.
+
+=== Turning it on
+
+```
+sh start.sh
+```

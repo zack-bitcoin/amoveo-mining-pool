@@ -8,7 +8,7 @@
     stdlib,
     ssl,
     inets,
-    %jiffy,
+    jiffy,
     cowboy,
     encrypter,
     pink_hash

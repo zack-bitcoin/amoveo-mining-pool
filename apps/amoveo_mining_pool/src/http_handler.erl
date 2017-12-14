@@ -14,6 +14,8 @@ handle(Req, State) ->
     {ok, Req4, State}.
 doit({problem}) -> 
     mining_pool_server:problem();
+doit({mining_data}) -> 
+    mining_pool_server:problem_api_mimic();
 doit({work, Nonce, Pubkey}) ->
     mining_pool_server:receive_work(Nonce, Pubkey).
     
