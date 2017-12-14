@@ -46,7 +46,8 @@ start_cron() ->
     gen_server:cast(?MODULE, new_problem_cron),
     timer:sleep(100),
     start_cron().
-receive_work(<<Nonce:256>>, Pubkey) ->
+receive_work(<<Nonce:256>>, Pubkey0) ->
+    Pubkey = base64:decode(Pubkey0),
     D = problem(),
     H = D#data.hash,
     Diff = D#data.diff,
