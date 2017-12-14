@@ -11,11 +11,17 @@ The server pays the worker some money.
 
 Some of the work can be used to make blocks to pay the server.
 
-It uses erlang.
+This software is only the server. Different kinds of workers can connect to this server, if they know your ip address and the port you are running this mining pool server on. By default it uses port 8085.
 
 
 === Turning it on
 
 ```
 sh start.sh
+```
+
+Then to turn it off:
+
+```
+halt().
 ```
