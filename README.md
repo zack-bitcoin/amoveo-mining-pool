@@ -20,7 +20,14 @@ This software is only the server. Different kinds of workers can connect to this
 sh start.sh
 ```
 
-Then to turn it off:
+To connect to it, so you can give it commands:
+```
+sh attach.sh
+```
+
+To disconnect, and allow it to run in the background, hold the CTRL key, and press D.
+
+Then to turn it off, make sure you are attached, and run:
 
 ```
 halt().

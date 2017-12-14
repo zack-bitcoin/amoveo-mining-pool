@@ -12,8 +12,8 @@ handle(Req, State) ->
     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
     {ok, Req4} = cowboy_req:reply(200, Headers, D, Req3),
     {ok, Req4, State}.
-doit({problem}) -> 
-    mining_pool_server:problem();
+%doit({problem}) -> 
+%    mining_pool_server:problem();
 doit({mining_data}) -> 
     mining_pool_server:problem_api_mimic();
 doit({work, Nonce, Pubkey}) ->
