@@ -1,3 +1,4 @@
+
 Amoveo Mining Pool
 ===========
 
@@ -24,6 +25,7 @@ To connect to it, so you can give it commands:
 ```
 sh attach.sh
 ```
+If it says "Node is not running!", this means that the Amoveo mining pool is shut off and there is nothing for you to connect to. So try using start.sh again to turn it on.
 
 To disconnect, and allow it to run in the background, hold the CTRL key, and press D.
 
