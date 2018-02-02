@@ -17,6 +17,8 @@ This software is only for the server. Different kinds of workers can connect to 
 
 === Turning it on
 
+First make sure you have an Amoveo node running, and that the keys are unlocked on that node.
+
 ```
 sh start.sh
 ```
