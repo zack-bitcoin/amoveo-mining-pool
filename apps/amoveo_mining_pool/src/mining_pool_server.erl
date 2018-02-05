@@ -66,8 +66,11 @@ receive_work(<<Nonce:256>>, Pubkey) ->
 found_block(<<Nonce:256>>) ->
     BinNonce = base64:encode(<<Nonce:256>>),
     Data = {work, <<Nonce:256>>, 0},
-    talk_helper(Data, ?FullNode, 40),%spend 8 seconds checking 5 times per second if we can start mining again.
-    new_problem(),
+    talk_helper(Data, ?FullNode, 1),%spend 8 seconds checking 5 times per second if we can start mining again.
+    spawn(fun() ->
+		  timer:sleep(1000),
+		  new_problem()
+	  end),
     ok.
     
 talk_helper2(Data, Peer) ->
