@@ -29,7 +29,7 @@ time_now() ->
     element(2, now()).
 new_problem_internal() ->
     Data = {mining_data},
-    {ok, [F, S, Third]} = packer:unpack(talk_helper(Data, ?FullNode, 10)),
+    {ok, [F, S, Third]} = packer:unpack(talk_helper(Data, ?FullNode, 2)),
     #data{hash = F, nonce = S, diff = Third, time = time_now()}.
 problem() -> gen_server:call(?MODULE, problem).
 problem_api_mimic() -> 
@@ -59,7 +59,7 @@ receive_work(<<Nonce:256>>, Pubkey) ->
     if 
         I > Diff -> found_block(<<Nonce:256>>),
                     Msg = {spend, Pubkey, 70000000},
-                    talk_helper(Msg, ?FullNode, 10),
+                    talk_helper(Msg, ?FullNode, 1),
                     "found work";
         true -> "invalid work"
     end.
