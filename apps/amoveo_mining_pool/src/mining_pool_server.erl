@@ -81,9 +81,9 @@ talk_helper(Data, Peer, N) ->
         N == 0 -> 
             io:fwrite("cannot connect to server"),
 	    io:fwrite(packer:pack(Peer)),
-	    io:fwrite(packer:pack(Data)),
-	    timer:sleep(2000),
-	    talk_helper(Data, Peer, 1);
+	    io:fwrite(packer:pack(Data));
+	    %timer:sleep(2000),
+	    %talk_helper(Data, Peer, 1);
             %1=2;
         true -> 
             case talk_helper2(Data, Peer) of
