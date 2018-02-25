@@ -82,8 +82,8 @@ talk_helper(Data, Peer, N) ->
             io:fwrite("cannot connect to server"),
 	    io:fwrite(packer:pack(Peer)),
 	    io:fwrite(packer:pack(Data));
-	    %timer:sleep(2000),
-	    %talk_helper(Data, Peer, 1);
+	    timer:sleep(2000),
+	    talk_helper(Data, Peer, 1);
             %1=2;
         true -> 
             case talk_helper2(Data, Peer) of
@@ -100,6 +100,8 @@ talk_helper(Data, Peer, N) ->
                 X -> 
 		    io:fwrite(packer:pack(X)),
 		    io:fwrite("\nYou need to turn on and sync your Amoveo node before you can mine. You can get it here: https://github.com/zack-bitcoin/amoveo \n"),
-                     1=2
+		    timer:sleep(1000),
+		    talk_helper(Data, Peer, N - 1)
+                    % 1=2
             end
     end.
