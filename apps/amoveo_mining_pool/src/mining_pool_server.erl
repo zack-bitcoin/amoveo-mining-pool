@@ -59,14 +59,14 @@ receive_work(<<Nonce:256>>, Pubkey) ->
     if 
         I > Diff -> found_block(<<Nonce:256>>),
                     Msg = {spend, Pubkey, 70000000},
-                    talk_helper(Msg, ?FullNode, 1),
+                    talk_helper(Msg, ?FullNode, 10),
                     "found work";
         true -> "invalid work"
     end.
 found_block(<<Nonce:256>>) ->
     BinNonce = base64:encode(<<Nonce:256>>),
     Data = {work, <<Nonce:256>>, 0},
-    talk_helper(Data, ?FullNode, 1),%spend 8 seconds checking 5 times per second if we can start mining again.
+    talk_helper(Data, ?FullNode, 10),%spend 8 seconds checking 5 times per second if we can start mining again.
     spawn(fun() ->
 		  timer:sleep(1000),
 		  new_problem()
@@ -81,21 +81,21 @@ talk_helper(Data, Peer, N) ->
         N == 0 -> 
             io:fwrite("cannot connect to server"),
 	    io:fwrite(packer:pack(Peer)),
-	    io:fwrite(packer:pack(Data)),
-	    timer:sleep(2000),
-	    talk_helper(Data, Peer, 1);
+	    io:fwrite(packer:pack(Data));
+	    %timer:sleep(2000),
+	    %talk_helper(Data, Peer, 1);
             %1=2;
         true -> 
             case talk_helper2(Data, Peer) of
                 {ok, {_Status, _Headers, []}} ->
 		    io:fwrite("first failure  mode \n"),
-                    timer:sleep(200),
+                    timer:sleep(100),
                     talk_helper(Data, Peer, N - 1);
                 {ok, {_, _, R}} -> R;
                 {error, timeout} -> 
 		    io:fwrite(packer:pack(Data)),
 		    io:fwrite("timeout error\n"),
-		    timer:sleep(1000),
+		    timer:sleep(500),
 		    talk_helper(Data, Peer, N - 1);
                 X -> 
 		    io:fwrite(packer:pack(X)),
