@@ -44,7 +44,7 @@ start_cron() ->
     %This checks every 0.1 seconds, to see if it is time to get a new problem.
     %We get a new problem every ?RefreshPeriod.
     gen_server:cast(?MODULE, new_problem_cron),
-    timer:sleep(100),
+    timer:sleep(500),
     start_cron().
 receive_work(<<Nonce:256>>, Pubkey) ->
     %Pubkey = base64:decode(Pubkey0),
