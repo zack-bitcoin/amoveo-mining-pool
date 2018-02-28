@@ -5,6 +5,7 @@
 -define(FullNode, "http://localhost:8081/").
 -record(data, {hash, nonce, diff, time}).
 -define(RefreshPeriod, 60).%in seonds. How often we get a new problem from the node to work on.
+%init(ok) -> {ok, new_problem_internal()}.
 init(ok) -> {ok, new_problem_internal()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
@@ -36,7 +37,7 @@ time_now() ->
 new_problem_internal() ->
     Data = {mining_data},
     case talk_helper(Data, ?FullNode, 10) of
-	ok -> ok;
+	ok -> #data{};
 	X ->
 	    {ok, [F, S, Third]} = packer:unpack(X),
 	    #data{hash = F, nonce = S, diff = Third, time = time_now()}
