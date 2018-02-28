@@ -14,8 +14,10 @@ handle_cast(new_problem_cron, Y) ->
     N = time_now(),
     T = Y#data.time,
     X = if 
-            ((N-T) > ?RefreshPeriod) -> 
-                new_problem_internal();
+            (((N-T) > ?RefreshPeriod) or ((N-T) < 0))-> 
+		spawn(fun() ->
+			      new_problem_internal()
+		      end);
             true -> Y
         end,
     {noreply, X};
