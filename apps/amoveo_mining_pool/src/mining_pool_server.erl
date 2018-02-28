@@ -15,24 +15,32 @@ handle_cast(new_problem_cron, Y) ->
     T = Y#data.time,
     X = if 
             (((N-T) > ?RefreshPeriod) or ((N-T) < 0))-> 
-		spawn(fun() ->
-			      new_problem_internal()
-		      end);
+		case new_problem_internal() of
+		    ok -> Y;
+		    Z -> Z
+		end;
             true -> Y
         end,
     {noreply, X};
 handle_cast(_, X) -> {noreply, X}.
 handle_call(problem, _From, X) -> {reply, X, X};
-handle_call(new_problem, _From, _) -> 
-    X = new_problem_internal(),
+handle_call(new_problem, _From, Y) -> 
+    X = case new_problem_internal() of
+	    ok -> Y;
+	    Z -> Z
+	end,
     {reply, X, X};
 handle_call(_, _From, X) -> {reply, X, X}.
 time_now() ->
     element(2, now()).
 new_problem_internal() ->
     Data = {mining_data},
-    {ok, [F, S, Third]} = packer:unpack(talk_helper(Data, ?FullNode, 10)),
-    #data{hash = F, nonce = S, diff = Third, time = time_now()}.
+    case talk_helper(Data, ?FullNode, 10) of
+	ok -> ok;
+	X ->
+	    {ok, [F, S, Third]} = packer:unpack(X),
+	    #data{hash = F, nonce = S, diff = Third, time = time_now()}
+    end.
 problem() -> gen_server:call(?MODULE, problem).
 problem_api_mimic() -> 
     %looks the same as amoveo api.
