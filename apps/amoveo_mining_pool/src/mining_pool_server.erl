@@ -69,7 +69,7 @@ receive_work(<<Nonce:256>>, Pubkey) ->
     %if the work is good enough, give some money to pubkey.
     if 
         I > Diff -> found_block(<<Nonce:256>>),
-                    Msg = {spend, Pubkey, 70000000},
+                    Msg = {spend, Pubkey, 97220764},
                     talk_helper(Msg, ?FullNode, 10),
                     "found work";
         true -> "invalid work"
@@ -90,7 +90,7 @@ talk_helper2(Data, Peer) ->
 talk_helper(Data, Peer, N) ->
     if 
         N == 0 -> 
-            io:fwrite("cannot connect to server"),
+            io:fwrite("cannot connect to server\n"),
 	    io:fwrite(packer:pack(Peer)),
 	    io:fwrite(packer:pack(Data)),
 	    timer:sleep(2000),

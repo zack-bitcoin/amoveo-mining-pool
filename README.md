@@ -4,6 +4,8 @@ Amoveo Mining Pool
 
 This is a mining pool for the [Amoveo blockchain](https://github.com/zack-bitcoin/amoveo).
 
+You must be in `sync_mode:normal().` in order to run the mining pool.
+
 A mining pool has a server. The server runs a full node of Amoveo so that they can calculate what we should be mining on next.
 
 A mining pool has workers. The workers all ask the server what to work on, and give their work to the server.
