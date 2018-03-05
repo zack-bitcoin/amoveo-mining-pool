@@ -5,10 +5,14 @@ terminate(_Reason, _Req, _State) -> ok.
 handle(Req, State) ->
     {ok, Data0, Req2} = cowboy_req:body(Req),
     {{IP, _}, Req3} = cowboy_req:peer(Req2),
-    io:fwrite("from IP "),
-    io:fwrite(packer:pack(IP)),
-    io:fwrite("\n"),
     Data = packer:unpack(Data0),
+    case Data of
+	{work, _, _} ->
+	    io:fwrite("work from IP "),
+	    io:fwrite(packer:pack(IP)),
+	    io:fwrite("\n");
+	_ -> ok
+    end,
     D0 = doit(Data),
     D = packer:pack(D0),
     Headers=[{<<"content-type">>,<<"application/octet-stream">>},
