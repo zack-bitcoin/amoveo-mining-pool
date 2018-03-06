@@ -8,9 +8,10 @@ handle(Req, State) ->
     Data = packer:unpack(Data0),
     case Data of
 	{work, _, _} ->
-	    io:fwrite("work from IP "),
-	    io:fwrite(packer:pack(IP)),
-	    io:fwrite("\n");
+	    %io:fwrite("work from IP "),
+	    %io:fwrite(packer:pack(IP)),
+	    %io:fwrite("\n");
+	    ok;
 	_ -> ok
     end,
     D0 = doit(Data),
