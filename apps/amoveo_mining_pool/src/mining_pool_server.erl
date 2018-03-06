@@ -62,8 +62,8 @@ receive_work(<<Nonce:256>>, Pubkey) ->
     D = problem(),
     H = D#data.hash,
     Diff = D#data.diff,
-    io:fwrite(packer:pack({recent_work, H, Diff, Nonce})),
-    io:fwrite("\n"),
+    %io:fwrite(packer:pack({recent_work, H, Diff, Nonce})),
+    %io:fwrite("\n"),
     Y = <<H/binary, Diff:16, Nonce:256>>,
     I = pow:hash2integer(hash:doit(Y)),
     %if the work is good enough, give some money to pubkey.
