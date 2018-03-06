@@ -69,7 +69,7 @@ receive_work(<<Nonce:256>>, Pubkey) ->
     %if the work is good enough, give some money to pubkey.
     if 
         I > Diff -> found_block(<<Nonce:256>>),
-                    Msg = {spend, Pubkey, 80000000},
+                    Msg = {spend, Pubkey, 105000000},
                     talk_helper(Msg, ?FullNode, 10),
                     "found work";
         true -> "invalid work"
