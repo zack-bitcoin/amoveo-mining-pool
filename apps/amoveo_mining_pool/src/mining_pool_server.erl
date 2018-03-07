@@ -12,13 +12,6 @@ code_change(_OldVsn, State, _Extra) -> {ok, State}.
 terminate(_, _) -> io:format("died!"), ok.
 handle_info(_, X) -> {noreply, X}.
 handle_cast(new_problem_cron, Y) -> 
-    S = erlang:process_info(self(), heap_size),
-    M = erlang:process_info(self(), memory),
-    io:fwrite("mining pool server new problem cron"),
-    io:fwrite(integer_to_list(element(2, S))),
-    io:fwrite(" "),
-    io:fwrite(integer_to_list(element(2, M))),
-    io:fwrite("\n"),
     N = time_now(),
     T = Y#data.time,
     X = if 
@@ -32,22 +25,8 @@ handle_cast(new_problem_cron, Y) ->
     {noreply, X};
 handle_cast(_, X) -> {noreply, X}.
 handle_call(problem, _From, X) -> 
-    S = erlang:process_info(self(), heap_size),
-    M = erlang:process_info(self(), memory),
-    io:fwrite("mining pool server new problem cron"),
-    io:fwrite(integer_to_list(element(2, S))),
-    io:fwrite(" "),
-    io:fwrite(integer_to_list(element(2, M))),
-    io:fwrite("\n"),
     {reply, X, X};
 handle_call(new_problem, _From, Y) -> 
-    S = erlang:process_info(self(), heap_size),
-    M = erlang:process_info(self(), memory),
-    io:fwrite("mining pool server new problem cron"),
-    io:fwrite(integer_to_list(element(2, S))),
-    io:fwrite(" "),
-    io:fwrite(integer_to_list(element(2, M))),
-    io:fwrite("\n"),
     X = case new_problem_internal() of
 	    ok -> Y;
 	    Z -> Z
