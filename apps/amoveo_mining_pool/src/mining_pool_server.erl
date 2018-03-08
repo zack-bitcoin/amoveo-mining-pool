@@ -4,7 +4,7 @@
         start_cron/0, problem_api_mimic/0, receive_work/2]).
 -define(FullNode, "http://localhost:8081/").
 -record(data, {hash, nonce, diff, time}).
--define(RefreshPeriod, 60).%in seonds. How often we get a new problem from the node to work on.
+-define(RefreshPeriod, 2).%in seonds. How often we get a new problem from the node to work on.
 %init(ok) -> {ok, new_problem_internal()}.
 init(ok) -> {ok, new_problem_internal()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
