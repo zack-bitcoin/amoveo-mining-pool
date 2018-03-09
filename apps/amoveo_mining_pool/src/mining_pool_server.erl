@@ -4,7 +4,8 @@
         start_cron/0, problem_api_mimic/0, receive_work/2]).
 -define(FullNode, "http://localhost:8081/").
 -record(data, {hash, nonce, diff, time}).
--define(RefreshPeriod, 2).%in seonds. How often we get a new problem from the node to work on.
+-define(RefreshPeriod, 2).%in seconds. How often we get a new problem from the node to work on.
+-define(PoolFee, 20.0).%block reward percentage to be kept by the pool owner, default 20 percent
 %init(ok) -> {ok, new_problem_internal()}.
 init(ok) -> {ok, new_problem_internal()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
@@ -70,7 +71,7 @@ receive_work(<<Nonce:256>>, Pubkey) ->
     %if the work is good enough, give some money to pubkey.
     if 
         I > Diff -> found_block(<<Nonce:256>>),
-                    Msg = {spend, Pubkey, 80000000},
+                    Msg = {spend, Pubkey, trunc((trees:dict_tree_get(governance, block_reward)*(100-?PoolFee))/100)},
                     talk_helper(Msg, ?FullNode, 10),
                     "found work";
         true -> "invalid work"
