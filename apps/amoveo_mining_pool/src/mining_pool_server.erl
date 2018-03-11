@@ -2,7 +2,7 @@
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
         start_cron/0, problem_api_mimic/0, receive_work/2]).
--define(FullNode, "http://localhost:8081/").
+-define(FullNode, "http://localhost:3011/").
 -record(data, {hash, nonce, diff, time}).
 -define(RefreshPeriod, 2).%in seonds. How often we get a new problem from the node to work on.
 %init(ok) -> {ok, new_problem_internal()}.
@@ -58,26 +58,26 @@ start_cron() ->
     gen_server:cast(?MODULE, new_problem_cron),
     timer:sleep(500),
     start_cron().
-receive_work(<<Nonce:256>>, Pubkey) ->
+receive_work(<<Nonce:184>>, Pubkey) ->
     %Pubkey = base64:decode(Pubkey0),
     D = problem(),
     H = D#data.hash,
     Diff = D#data.diff,
     %io:fwrite(packer:pack({recent_work, H, Diff, Nonce})),
     %io:fwrite("\n"),
-    Y = <<H/binary, Diff:16, Nonce:256>>,
-    I = pow:hash2integer(hash:doit(Y)),
+    Y = <<H/binary, Nonce:184>>,
+    I = pow:hash2integer(hash:doit(Y), 1),
     %if the work is good enough, give some money to pubkey.
     if 
-        I > Diff -> found_block(<<Nonce:256>>),
+        I > Diff -> found_block(<<Nonce:184>>),
                     Msg = {spend, Pubkey, 95216213},
                     talk_helper(Msg, ?FullNode, 10),
                     "found work";
         true -> "invalid work"
     end.
-found_block(<<Nonce:256>>) ->
-    BinNonce = base64:encode(<<Nonce:256>>),
-    Data = {work, <<Nonce:256>>, 0},
+found_block(<<Nonce:184>>) ->
+    BinNonce = base64:encode(<<Nonce:184>>),
+    Data = {work, <<Nonce:184>>, 0},
     talk_helper(Data, ?FullNode, 10),%spend 8 seconds checking 5 times per second if we can start mining again.
     spawn(fun() ->
 		  timer:sleep(1000),
