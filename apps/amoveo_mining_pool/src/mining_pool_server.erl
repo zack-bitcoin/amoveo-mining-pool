@@ -2,7 +2,7 @@
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
         start_cron/0, problem_api_mimic/0, receive_work/2]).
--define(FullNode, "http://localhost:3011/").
+-define(FullNode, "http://localhost:8081/").
 -record(data, {hash, nonce, diff, time}).
 -define(RefreshPeriod, 2).%in seonds. How often we get a new problem from the node to work on.
 %init(ok) -> {ok, new_problem_internal()}.
