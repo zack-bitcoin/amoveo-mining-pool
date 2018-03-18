@@ -5,7 +5,7 @@
 
 -record(account, {pubkey, veo = 0, work = 1}).
 -define(File, "account.db").
--define(LIMIT, 100000000).
+-define(LIMIT, 50000000).
 init(ok) -> 
     A = case file:read_file(?File) of
 	    {error, enoent} ->
