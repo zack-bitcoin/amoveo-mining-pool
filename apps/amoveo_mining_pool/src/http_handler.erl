@@ -27,7 +27,7 @@ doit({account, Pubkey}) ->
 doit({mining_data, _}) -> 
     {ok, [Hash, Nonce, Diff]} = 
 	mining_pool_server:problem_api_mimic(),
-    {ok, [Hash, Nonce, Diff, Diff]};
+    {ok, [Hash, Diff, Diff]};
 doit({mining_data}) -> 
     mining_pool_server:problem_api_mimic();
 doit({work, Nonce, Pubkey}) ->
