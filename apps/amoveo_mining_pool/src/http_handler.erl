@@ -22,8 +22,11 @@ handle(Req, State) ->
     {ok, Req4, State}.
 %doit({problem}) -> 
 %    mining_pool_server:problem();
+doit({account, Pubkey}) -> 
+    accounts:balance(Pubkey);
 doit({mining_data}) -> 
     mining_pool_server:problem_api_mimic();
 doit({work, Nonce, Pubkey}) ->
+    io:fwrite("attempted work \n"),
     mining_pool_server:receive_work(Nonce, Pubkey).
     

@@ -13,7 +13,9 @@ stop(_State) -> ok.
 start_http() ->
     Dispatch =
         cowboy_router:compile(
-          [{'_', [{"/", http_handler, []}]}]),
+          [{'_', [{"/:file", file_handler, []},
+		  {"/", http_handler, []}
+		 ]}]),
     {ok, Port} = application:get_env(amoveo_mining_pool, port),
     {ok, _} = cowboy:start_http(
                 http, 100,
