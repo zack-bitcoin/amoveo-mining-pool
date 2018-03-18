@@ -3,5 +3,5 @@
 
 miner_reward() -> 0.03.
 block_reward() -> 100000000.
-full_node() -> "http://localhost:3011/".
+full_node() -> "http://localhost:8081/".
     
