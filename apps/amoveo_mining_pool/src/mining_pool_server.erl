@@ -5,7 +5,7 @@
 -record(data, {hash, nonce, diff, time}).
 -define(RefreshPeriod, 2).%in seonds. How often we get a new problem from the node to work on.
 %init(ok) -> {ok, new_problem_internal()}.
--define(ShareBlockRatio, 12).%so if this is 4, that means we pay 16 shares for every block we find on average. if it is 10, then we pay 1024 shares for every block we find.
+-define(ShareBlockRatio, 11).%so if this is 4, that means we pay 16 shares for every block we find on average. if it is 10, then we pay 1024 shares for every block we find.
 init(ok) -> {ok, new_problem_internal()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
