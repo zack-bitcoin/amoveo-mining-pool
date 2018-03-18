@@ -36,10 +36,12 @@ handle_cast({give_share, Pubkey}, X) ->
 	 end,
     Total = dict:fetch(total, X2),
     X3 = dict:store(total, Total+1, X2),
+    save(X3),
     {noreply, X3};
 handle_cast(pay, X) -> 
     %reduce how many veo they have in the pool, pay them veo on the blockchain.
     X2 = pay_internal(dict:fetch_keys(X), X),
+    save(X2),
     {noreply, X2};
 handle_cast(reward, X) -> 
     %change shares into veo.
