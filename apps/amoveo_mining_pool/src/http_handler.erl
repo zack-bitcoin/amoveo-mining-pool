@@ -25,7 +25,9 @@ handle(Req, State) ->
 doit({account, Pubkey}) -> 
     accounts:balance(Pubkey);
 doit({mining_data, _}) -> 
-    mining_pool_server:problem_api_mimic();
+    {ok, [Hash, Nonce, Diff]} = 
+	mining_pool_server:problem_api_mimic(),
+    {ok, [Hash, Nonce, Diff, Diff]};
 doit({mining_data}) -> 
     mining_pool_server:problem_api_mimic();
 doit({work, Nonce, Pubkey}) ->
