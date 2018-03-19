@@ -72,17 +72,16 @@ receive_work(<<Nonce:184>>, Pubkey) ->
     if
 	I > EasyDiff -> 
 	    %io:fwrite("found share\n"),
-	    accounts:give_share(Pubkey);
+	    accounts:give_share(Pubkey),
+	    if 
+		I > Diff -> 
+		    found_block(<<Nonce:184>>),
+		    io:fwrite("found block\n"),
+		    "found block";
+		true -> 
+		    "found work"
+	    end;
 	true ->
-	    ok
-    end,
-    if 
-        I > Diff -> 
-	    found_block(<<Nonce:184>>),
-	    io:fwrite("found block\n"),
-	    "found work";
-        true -> 
-	    %io:fwrite("bad work\n"),
 	    "invalid work"
     end.
 found_block(<<Nonce:184>>) ->
