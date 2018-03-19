@@ -12,8 +12,9 @@ handle_info(_, X) -> {noreply, X}.
 handle_cast(new_problem_cron, Y) -> 
     N = time_now(),
     T = Y#data.time,
+    RP = config:refresh_period(),
     X = if 
-            (((N-T) > config:refresh_period) or ((N-T) < 0))-> 
+            (((N-T) > RP) or ((N-T) < 0)) -> 
 		case new_problem_internal() of
 		    ok -> Y;
 		    Z -> Z
