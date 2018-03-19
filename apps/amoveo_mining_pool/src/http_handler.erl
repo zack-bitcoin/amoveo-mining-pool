@@ -31,6 +31,6 @@ doit({mining_data, _}) ->
 doit({mining_data}) -> 
     mining_pool_server:problem_api_mimic();
 doit({work, Nonce, Pubkey}) ->
-    io:fwrite("attempted work \n"),
+    %io:fwrite("attempted work \n"),
     mining_pool_server:receive_work(Nonce, Pubkey).
     
