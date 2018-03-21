@@ -81,8 +81,13 @@ pay_times(N) ->
     timer:sleep(500),
     pay_times(N-1).
 
-gr2([], _, X) -> dict:store(total, 0, X);
-gr2([total|T], PPS, D) -> gr2(T, PPS, D);
+gr2([], _, X) -> X;
+gr2([total|T], PPS, D) -> 
+    Total = dict:fetch(total, D),
+    {RT, RB} = config:ratio(),
+    Total2 = Total * RT div RB,
+    D2 = dict:store(total, Total2),
+    gr2(T, PPS, D);
 gr2([K|T], PPS, D) ->
     H = dict:fetch(K, D),
     V = H#account.veo,
