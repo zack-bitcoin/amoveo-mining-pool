@@ -86,7 +86,7 @@ gr2([total|T], PPS, D) ->
     Total = dict:fetch(total, D),
     {RT, RB} = config:ratio(),
     Total2 = Total * RT div RB,
-    D2 = dict:store(total, Total2),
+    D2 = dict:store(total, Total2, D),
     gr2(T, PPS, D);
 gr2([K|T], PPS, D) ->
     H = dict:fetch(K, D),
