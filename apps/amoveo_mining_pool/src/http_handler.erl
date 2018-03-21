@@ -22,6 +22,9 @@ handle(Req, State) ->
     {ok, Req4, State}.
 %doit({problem}) -> 
 %    mining_pool_server:problem();
+doit({account, 2}) ->
+    D = accounts:check(),
+    {ok, dict:fetch(total, D)};
 doit({account, Pubkey}) -> 
     accounts:balance(Pubkey);
 doit({mining_data, _}) -> 
