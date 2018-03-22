@@ -126,6 +126,7 @@ store(A, D) ->
 
 
 sum_total([], _) -> 0;
+sum_total([total|T], D) -> sum_total(T, D);
 sum_total([H|T], D) ->
     A = dict:fetch(H, D),
     A#account.work + sum_total(T, D).
