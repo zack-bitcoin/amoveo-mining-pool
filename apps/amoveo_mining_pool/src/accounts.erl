@@ -2,7 +2,8 @@
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
 	 give_share/1,got_reward/0,pay_veo/0,balance/1,
-	 check/0, final_reward/0]).
+	 check/0, final_reward/0,
+	 fix_total/0]).
 
 -record(account, {pubkey, veo = 0, work = 1}).
 -define(File, "account.db").
@@ -28,6 +29,11 @@ start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
 terminate(_, _) -> io:format("died!"), ok.
 handle_info(_, X) -> {noreply, X}.
+handle_cast(fix_total, X) -> 
+    Keys = dict:fetch_keys(X),
+    Total = sum_total(Keys, X),
+    X2 = dict:store(total, Total, X),
+    {noreply, X2};
 handle_cast({give_share, Pubkey}, X) -> 
     %if someone gives us valid work, then give their account a share.
     X2 = case dict:find(Pubkey, X) of
@@ -68,6 +74,7 @@ handle_call({balance, Pubkey}, _From, X) ->
 handle_call(_, _From, X) -> {reply, X, X}.
 
 check() -> gen_server:call(?MODULE, check).
+fix_total() -> gen_server:call(?MODULE, fix_total).
 balance(Pubkey) -> gen_server:call(?MODULE, {balance, Pubkey}).
 give_share(Pubkey) -> gen_server:cast(?MODULE, {give_share, Pubkey}).
 got_reward() -> gen_server:cast(?MODULE, reward).
@@ -116,3 +123,9 @@ pay_internal([K|T], X, Limit) ->
     pay_internal(T, X2, Limit).
 store(A, D) ->
     dict:store(A#account.pubkey, A, D).
+
+
+sum_total([], _) -> 0;
+sum_total([H|T], D) ->
+    A = dict:fetch(H, D),
+    A#account.work + sum_total(T, D).
