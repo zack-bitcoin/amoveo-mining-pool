@@ -100,8 +100,7 @@ gr2([K|T], PPS, D) ->
     V = H#account.veo,
     W = H#account.work,
     {RT, RB} = config:ratio(),
-    OT = RB - RT,
-    A = H#account{work = W * RT div RB, veo = V + (PPS * W * OT div RB)},
+    A = H#account{work = W * RT div RB, veo = V + (PPS * W)},
     D2 = store(A, D),
     gr2(T, PPS, D2).
 pay_internal([], X, _) -> X;
