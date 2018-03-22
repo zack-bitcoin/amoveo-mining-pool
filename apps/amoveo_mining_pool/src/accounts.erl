@@ -74,7 +74,7 @@ handle_call({balance, Pubkey}, _From, X) ->
 handle_call(_, _From, X) -> {reply, X, X}.
 
 check() -> gen_server:call(?MODULE, check).
-fix_total() -> gen_server:call(?MODULE, fix_total).
+fix_total() -> gen_server:cast(?MODULE, fix_total).
 balance(Pubkey) -> gen_server:call(?MODULE, {balance, Pubkey}).
 give_share(Pubkey) -> gen_server:cast(?MODULE, {give_share, Pubkey}).
 got_reward() -> gen_server:cast(?MODULE, reward).
