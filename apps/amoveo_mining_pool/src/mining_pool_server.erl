@@ -36,7 +36,7 @@ time_now() ->
     element(2, now()).
 new_problem_internal() ->
     Data = {mining_data},
-    case talker:talk_helper(Data, config:full_node(), 10) of
+    case talker:talk_helper(Data, config:full_node(), 10000) of
 	ok -> new_problem_internal();
 	X ->
 	    {ok, [F, S, Third]} = packer:unpack(X),
