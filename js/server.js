@@ -20,6 +20,9 @@ document.body.appendChild(server_port_info);
 document.body.appendChild(server_port);
 
 document.body.appendChild(document.createElement("br"));
+var miner_location = document.createElement("h8");
+miner_location.innerHTML = "point your miner here: http://".concat(server_ip.value).concat(":").concat(server_port.value);
+document.body.appendChild(miner_location);
 document.body.appendChild(document.createElement("br"));
 
 function get_port() {
