@@ -3,7 +3,7 @@
 
 %full_node() -> "http://localhost:3011/".%useful for testing by connecting to `make multi-quick` mode in the amoveo full node.
 full_node() -> "http://localhost:8081/".
-miner_reward() -> {3, 100}.
+miner_reward() -> {2, 100}.
 block_reward() -> 100000000.
 pubkey() -> 
     <<4,40,221,150,68,202,200,88,123,4,28,120,130,178,212,24,
