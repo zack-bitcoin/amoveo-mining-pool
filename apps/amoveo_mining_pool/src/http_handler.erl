@@ -20,10 +20,8 @@ handle(Req, State) ->
     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
     {ok, Req4} = cowboy_req:reply(200, Headers, D, Req3),
     {ok, Req4, State}.
-%doit({problem}) -> 
-%    mining_pool_server:problem();
 doit({account, 2}) ->
-    D = accounts:check(),
+    D = accounts:check(),%duplicating the database here is no good. It will be slow if there are too many accounts.
     {ok, dict:fetch(total, D)};
 doit({account, Pubkey}) -> 
     accounts:balance(Pubkey);
