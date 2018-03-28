@@ -28,5 +28,5 @@
   1},
  {<<"trie">>,
   {git,"https://github.com/BumblebeeBat/MerkleTrie",
-       {ref,"616806e9e64c6e0dccd1d6708c7b33da00b28968"}},
+       {ref,"ffe7234555ffc6d9c50dcf88ef76e21b85ff04e1"}},
   0}].

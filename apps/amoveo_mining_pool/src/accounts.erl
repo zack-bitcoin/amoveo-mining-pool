@@ -11,7 +11,7 @@ initial_state() ->
     Shares = config:rt() * 
 	round(math:pow(2, config:share_block_ratio())),
     D2 = dict:store(total, Shares, dict:new()),
-    A = #account{pubkey = config:pubkey(),
+    A = #account{pubkey = base64:decode(config:pubkey()),
 		 work = Shares},
     store(A, D2).
 init(ok) -> 
@@ -59,7 +59,7 @@ handle_cast(reward, X) ->
     X2 = if 
 	     TotalShares < 1 -> X;
 	     true ->
-		 {MT, MB} = config:miner_reward(),
+		 {MT, MB} = config:pool_reward(),
 		 Pay = config:block_reward()*(MB - MT) div MB,
 		 PayPerShare = Pay div TotalShares,
 		 Keys = dict:fetch_keys(X),

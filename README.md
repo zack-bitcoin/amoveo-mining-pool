@@ -39,6 +39,15 @@ Then to turn it off, make sure you are attached, and run:
 halt().
 ```
 
+=== Configure your node
+
+[the config file is here](apps/amoveo_mining_pool/src/config.erl)
+There are comments in the config file to explain what each thing is for.
+
+!!! WARNING !!!
+Make sure to update the `pubkey` value in config.erl
+
+
 === internal commands
 
 give one share to this account:
