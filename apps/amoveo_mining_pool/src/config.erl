@@ -1,8 +1,8 @@
 -module(config).
 -compile(export_all).
 
-full_node() -> "http://localhost:3011/".%useful for testing by connecting to `make multi-quick` mode in the amoveo full node.
-%full_node() -> "http://localhost:8081/".
+%full_node() -> "http://localhost:3011/".%useful for testing by connecting to `make multi-quick` mode in the amoveo full node.
+full_node() -> "http://localhost:8081/".
 pool_reward() -> {2, 100}.%this is the portion of the block reward that goes to the mining pool.
 block_reward() -> 100227592.
 pubkey() -> "BCjdlkTKyFh7BBx4grLUGFJCedmzo4e0XT1KJtbSwq5vCJHrPltHATB+maZ+Pncjnfvt9CsCcI9Rn1vO+fPLIV4=". %Initially, this pubkey controls all the shares in the pool. About half of the first (rt() + 1) block rewards will go to this account. This is important so that we don't over-reward the miners of the first 10 blocks.
