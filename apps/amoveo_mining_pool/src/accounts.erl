@@ -2,7 +2,7 @@
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
 	 give_share/1,got_reward/0,pay_veo/0,balance/1,
-	 check/0, final_reward/0,
+	 check/0, final_reward/0,pay_veo/1,
 	 fix_total/0]).
 
 -record(account, {pubkey, veo = 0, work = 1}).
@@ -53,6 +53,16 @@ handle_cast({pay, Limit}, X) ->
     X2 = pay_internal(dict:fetch_keys(X), X, Limit),
     save(X2),
     {noreply, X2};
+handle_cast({pay_single, Pubkey}, X) ->
+    X3 = case dict:find(Pubkey, X) of
+	     error -> X;
+	     {ok, total} -> X;
+	     {ok, H} ->
+		 X2 = pay_internal([Pubkey], X, config:tx_fee()),
+		 save(X2),
+		 X2
+	 end,
+    {noreply, X3};
 handle_cast(reward, X) -> 
     %change shares into veo.
     TotalShares = dict:fetch(total, X),
@@ -79,6 +89,7 @@ balance(Pubkey) -> gen_server:call(?MODULE, {balance, Pubkey}).
 give_share(Pubkey) -> gen_server:cast(?MODULE, {give_share, Pubkey}).
 got_reward() -> gen_server:cast(?MODULE, reward).
 pay_veo() -> gen_server:cast(?MODULE, {pay, config:payout_limit()}).
+pay_veo(Pubkey) -> gen_server:cast(?MODULE, {pay_single, Pubkey}).
 final_reward() ->
     pay_times(config:rt()),
     gen_server:cast(?MODULE, {pay, config:tx_fee()}).
@@ -112,7 +123,7 @@ pay_internal([K|T], X, Limit) ->
     B = V > Limit,
     X2 = if
 	     B -> spawn(fun() ->
-				Msg = {spend, Pubkey, V},
+				Msg = {spend, Pubkey, V - config:tx_fee()},
 				talker:talk_helper(Msg, config:full_node(), 10)
 			end),
 		  A2 = H#account{veo = 0},
