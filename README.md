@@ -50,6 +50,12 @@ Make sure to update the `pubkey` value in config.erl
 
 === internal commands
 
+Make a blockchain transaction to pay this person the Veo they own:
+```
+accounts:pay_veo(base64:decode("BCjdlkTKyFh7BBx4grLUGFJCedmzo4e0XT1KJtbSwq5vCJHrPltHATB+maZ+Pncjnfvt9CsCcI9Rn1vO+fPLIV4=")).
+```
+^ pay_veo/1 is useful if someone wants to stop mining, and they can't afford to get to the limit where it automatically pays out.
+
 give one share to this account:
 ```
 accounts:give_share(base64:decode("BCjdlkTKyFh7BBx4grLUGFJCedmzo4e0XT1KJtbSwq5vCJHrPltHATB+maZ+Pncjnfvt9CsCcI9Rn1vO+fPLIV4=")).
@@ -61,24 +67,23 @@ Look up the data for an account:
 accounts:balance(base64:decode("BCjdlkTKyFh7BBx4grLUGFJCedmzo4e0XT1KJtbSwq5vCJHrPltHATB+maZ+Pncjnfvt9CsCcI9Rn1vO+fPLIV4=")).
 ```
 
-make a copy of the current accounts database, and store it in variable V.
+Make a copy of the current accounts database, and store it in variable V.
 ```
 V = accounts:check().
 ```
 
-This is the code that is run every time the pool finds a block. It is used to convert shares into Veo stored on the pool.
+got_reward/0 is run every time the pool finds a block. It is used to convert shares into Veo stored on the pool.
 ```
 accounts:got_reward().
 ```
 
-This is the command for scanning the accounts to see if anyone has enough veo that we should make a tx to send them to veo.
+pay_veo/0 is for scanning the accounts to see if anyone has enough veo that we should make a tx to send them to veo.
 ```
 accounts:pay_veo().
 ```
 
-This is the command you run if you want to shut off the mining pool. Make sure that you have enough veo in your account first.
+final_reward/0 is the command you run if you want to shut off the mining pool. Make sure that you have enough veo in your account first.
 This pays everyone about enough so that you don't under-reward the people who mine that last few blocks.
-
 ```
 accounts:final_reward().
 ```
