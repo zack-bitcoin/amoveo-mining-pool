@@ -3,7 +3,7 @@
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
 	 give_share/1,got_reward/0,pay_veo/0,balance/1,
 	 check/0, final_reward/0,pay_veo/1,
-	 fix_total/0]).
+	 fix_total/0, total_veo/0]).
 
 -record(account, {pubkey, veo = 0, work = 1}).
 -define(File, "account.db").
@@ -78,6 +78,10 @@ handle_cast(reward, X) ->
     save(X2),
     {noreply, X2};
 handle_cast(_, X) -> {noreply, X}.
+handle_call(balance, _From, X) -> 
+    K = dict:fetch_keys(X),
+    Z = sum_balance(K, X),
+    {reply, Z, X};
 handle_call({balance, Pubkey}, _From, X) -> 
     B = dict:find(Pubkey, X),
     {reply, B, X};
@@ -86,10 +90,16 @@ handle_call(_, _From, X) -> {reply, X, X}.
 check() -> gen_server:call(?MODULE, check).
 fix_total() -> gen_server:cast(?MODULE, fix_total).
 balance(Pubkey) -> gen_server:call(?MODULE, {balance, Pubkey}).
+total_veo() -> gen_server:call(?MODULE, balance).
 give_share(Pubkey) -> gen_server:cast(?MODULE, {give_share, Pubkey}).
 got_reward() -> gen_server:cast(?MODULE, reward).
 pay_veo() -> gen_server:cast(?MODULE, {pay, config:payout_limit()}).
 pay_veo(Pubkey) -> gen_server:cast(?MODULE, {pay_single, Pubkey}).
+sum_balance([], _) -> 0;
+sum_balance([total|T], X) -> sum_balance(T, X);
+sum_balance([H|T], X) ->
+    A = dict:fetch(H, X),
+    A#account.veo + sum_balance(T, X).
 final_reward() ->
     pay_times(config:rt()),
     gen_server:cast(?MODULE, {pay, config:tx_fee()}).
