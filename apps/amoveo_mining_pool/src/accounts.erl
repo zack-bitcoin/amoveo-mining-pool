@@ -57,7 +57,7 @@ handle_cast({pay_single, Pubkey}, X) ->
     X3 = case dict:find(Pubkey, X) of
 	     error -> X;
 	     {ok, total} -> X;
-	     {ok, H} ->
+	     {ok, _} ->
 		 X2 = pay_internal([Pubkey], X, config:tx_fee()),
 		 save(X2),
 		 X2
@@ -133,9 +133,13 @@ pay_internal([K|T], X, Limit) ->
     B = V > Limit,
     X2 = if
 	     B -> spawn(fun() ->
+				%io:fwrite("make spend tx\n"),
+				%io:fwrite(packer:pack(Pubkey)),
+				%io:fwrite("\n"),
 				Msg = {spend, Pubkey, V - config:tx_fee()},
 				talker:talk_helper(Msg, config:full_node(), 10)
 			end),
+		  timer:sleep(500),
 		  A2 = H#account{veo = 0},
 		  store(A2, X);
 	     true -> X

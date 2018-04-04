@@ -89,6 +89,11 @@ accounts:final_reward().
 ```
 
 
+This is the command for looking up the total amount of veo that we owe to miners. Make sure that your full node's account balance stays above this amount, that way you can afford to pay everyone:
+```
+accounts:total_veo().
+```
+
 
 === API commands
 

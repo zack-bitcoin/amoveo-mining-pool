@@ -88,8 +88,8 @@ found_block(<<Nonce:184>>) ->
     BinNonce = base64:encode(<<Nonce:184>>),
     Data = {work, <<Nonce:184>>, 0},
     _X = talker:talk_helper(Data, config:full_node(), 10),%spend 8 seconds checking 5 times per second if we can start mining again.
-    accounts:got_reward(),
-    accounts:pay_veo(),
+    %accounts:got_reward(),
+    %accounts:pay_veo(),
     spawn(fun() ->
 		  timer:sleep(1000),
 		  new_problem()
