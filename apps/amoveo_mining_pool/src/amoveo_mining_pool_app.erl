@@ -14,6 +14,7 @@ start_http() ->
     Dispatch =
         cowboy_router:compile(
           [{'_', [{"/:file", file_handler, []},
+		  {"/work/", http_handler, []}
 		  {"/", http_handler, []}
 		 ]}]),
     {ok, Port} = application:get_env(amoveo_mining_pool, port),
