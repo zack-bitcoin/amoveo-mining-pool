@@ -1,5 +1,8 @@
 Right now the miner only rewards a worker who finds a block.
 
+don't give shares to
+v8X+pcYXf+kLyaTW0F6W228vqIQPKrXegIJU0SoVn4Wr5EIYUOeHGwo7AhNuCjfIz7+fUpgqNSTPQsmCfxpieeQ=
+
 * mining pool should say the fee size, the number of active miners, last block made today, blocks made in last 24 hours, total veo distributed, current block height?
 
 Instead we want to give out rewards that are 1/100th as big, and give them out 100 times per block mined.
