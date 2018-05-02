@@ -5,15 +5,15 @@ terminate(_Reason, _Req, _State) -> ok.
 handle(Req, State) ->
     {ok, Data0, Req2} = cowboy_req:body(Req),
     {{IP, _}, Req3} = cowboy_req:peer(Req2),
-    io:fwrite("http handler got message: "),
-    io:fwrite(Data0),
-    io:fwrite("\n"),
+    %io:fwrite("http handler got message: "),
+    %io:fwrite(Data0),
+    %io:fwrite("\n"),
     Data = packer:unpack(Data0),
     case Data of
 	{work, _, _} ->
-	    %io:fwrite("work from IP "),
-	    %io:fwrite(packer:pack(IP)),
-	    %io:fwrite("\n");
+	    io:fwrite("work from IP "),
+	    io:fwrite(packer:pack(IP)),
+	    io:fwrite("\n");
 	    ok;
 	_ -> ok
     end,
