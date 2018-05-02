@@ -13,7 +13,7 @@ handle(Req, State) ->
 	{work, _, _} ->
 	    io:fwrite("work from IP "),
 	    io:fwrite(packer:pack(IP)),
-	    io:fwrite("\n");
+	    io:fwrite("\n"),
 	    ok;
 	_ -> ok
     end,
