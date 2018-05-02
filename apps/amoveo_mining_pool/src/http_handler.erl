@@ -1,3 +1,4 @@
+
 -module(http_handler).
 -export([init/3, handle/2, terminate/3, doit/1]).
 init(_Type, Req, _Opts) -> {ok, Req, no_state}.
@@ -13,6 +14,8 @@ handle(Req, State) ->
 	{work, _, _} ->
 	    io:fwrite("work from IP "),
 	    io:fwrite(packer:pack(IP)),
+	    io:fwrite("\n"),
+	    io:fwrite(Data0),
 	    io:fwrite("\n"),
 	    ok;
 	_ -> ok
