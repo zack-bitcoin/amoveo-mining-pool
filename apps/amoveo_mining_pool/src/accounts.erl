@@ -36,18 +36,26 @@ handle_cast(fix_total, X) ->
     {noreply, X2};
 handle_cast({give_share, Pubkey}, X) -> 
     %if someone gives us valid work, then give their account a share.
-    X2 = case dict:find(Pubkey, X) of
-	     error ->
-		 A = #account{pubkey = Pubkey},
-		 store(A, X);
-	     {ok, B} ->
-		 B2 = B#account{work = B#account.work + 1},
-		 store(B2, X)
-	 end,
-    Total = dict:fetch(total, X2),
-    X3 = dict:store(total, Total+1, X2),
-    save(X3),
-    {noreply, X3};
+    BadKey = <<191,197,254,165,198,23,127,233,11,201,164,214,208,94,
+	      150,219,111,47,168,132,15,42,181,222,128,130,84,209,42,
+	      21,159,133,171,228,66,24,80,231,135,27,10,59,2,19,110,
+	      10,55,200,207,191,159,82,152,42,53,36,207,66,201,130,
+	      127,26,98,121,228>>,
+    if
+	Pubkey == BadKey -> {noreply, X};
+	true ->
+	    A = case dict:find(Pubkey, X) of
+		     error ->
+			 #account{pubkey = Pubkey};
+		     {ok, B} ->
+			 B#account{work = B#account.work + 1}
+		 end,
+	    X2 = store(A, X),
+	    Total = dict:fetch(total, X2),
+	    X3 = dict:store(total, Total+1, X2),
+	    save(X3),
+	    {noreply, X3}
+    end;
 handle_cast({pay, Limit}, X) -> 
     %reduce how many veo they have in the pool, pay them veo on the blockchain.
     X2 = pay_internal(dict:fetch_keys(X), X, Limit),
