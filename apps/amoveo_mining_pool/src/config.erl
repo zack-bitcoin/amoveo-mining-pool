@@ -21,3 +21,4 @@ tx_fee() -> 152000.%when you shut off the pool, it pays out to everyone who has 
 payout_limit() -> 50000000.%when a miner has more than this much veo, it automatically pays out to you.
 refresh_period() -> 2.%how often we get a new problem from the server to work on. in seconds
 confirmations() -> 5. %how many confirmations does a block need before we can pay out the reward
+spend_log_file() -> "spend.log".

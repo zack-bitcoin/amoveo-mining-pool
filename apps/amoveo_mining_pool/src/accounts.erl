@@ -141,10 +141,10 @@ pay_internal([K|T], X, Limit) ->
     B = V > Limit,
     X2 = if
 	     B -> spawn(fun() ->
-				%io:fwrite("make spend tx\n"),
-				%io:fwrite(packer:pack(Pubkey)),
-				%io:fwrite("\n"),
-				Msg = {spend, Pubkey, V - config:tx_fee()},
+				A = V - config:tx_fee(),
+				S = binary_to_list(base64:encode(Pubkey)) ++ " " ++ integer_to_list(A) ++ "\n",
+				file:write_file(config:spend_log_file(), S, [append]),
+				Msg = {spend, Pubkey, A},
 				talker:talk_helper(Msg, config:full_node(), 10)
 			end),
 		  timer:sleep(500),
