@@ -1,18 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
   <head>
+    <meta charset="utf-8">
+    <title>Amoveo Mining Pool</title>
+    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.9.1/css/tachyons.min.css"/>
   </head>
-  <body>
+  <body class="sans-serif">
+
+  <div class="container center mw7 pv4 ph3">
+    <h1 class="f1">Amoveo Mining Pool</h1>
+
+
+    <div class="content-block">
+      <h3 class="f3 mb0">Pool</h3>
+      <ul class="pool-info list pa0 mt0 mb5">
+        <li class="dib-ns mr5">
+          <h6 class="f7 gray tracked ttu mv3">Pool URL</h6>
+          <span id="miner_location" class="f4">loading...</span>
+        </li>
+        <li class="dib mr5">
+          <h6 class="gray tracked ttu mv3">Pool Fee</h6>
+          <span id="pool_fee" class="f4">loading...</span>
+        </li>
+        <li class="dib mr5">
+          <h6 class="f7 gray tracked ttu mv3">Minumum Payout</h6>
+          <span id="pool_min_payout" class="f4">loading...</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h3 class="f3 mb0">Miner</h3>
+      <div class="miner-stats">
+        <div class="miner-address">
+          <h6 class="f7 gray tracked ttu mv3">Miner Address</h6>
+          <input id="miner_address" class="pa2 input-reset ba b--moon-gray bg-transparent w-100 measure" type="text" name="miner_address" value="">
+          <input id="miner_address_button" class="f5 link br2 ph3 pv2 mb2 dib white bg-blue hover-bg-dark-blue bg-animate" type="submit" value="Lookup Miner">
+        </div>
+        <ul class="miner-info list pa0 mt0 mb5">
+          <li class="dib mr5">
+            <h6 class="f7 gray tracked ttu mv3">Pending Shares</h6>
+            <span id="miner_shares" class="f4">n/a</span>
+          </li>
+          <li class="dib mr5">
+            <h6 class="f7 gray tracked ttu mv3">Wallet Balance</h6>
+            <span id="miner_balance" class="f4">n/a</span>
+          </li>
+        </ul>
+        <ul class="miner-info list pa0 mt0 mb5">
+          <li class="dib mr5">
+            <h6 class="f7 gray tracked ttu mv3">Outstanding Shares</h6>
+            <span id="outstanding_shares" class="f4">n/a</span>
+          </li>
+          <li class="dib mr5">
+            <input id="outstanding_shares_button" class="f5 link br2 ph3 pv2 mb2 dib white bg-blue hover-bg-dark-blue bg-animate" type="submit" value="Lookup Outstanding Shares">
+          </li>
+        </ul>
+
+      </div>
+
+      <div class="content-block">
+        <h3 class="f3 mb0">How?</h3>
+        <h6 class="f7 gray tracked ttu mv3">Step 1</h6>
+        <div class="f4 mb4">Create a <a class="blue link hover-dark-blue" href="http://159.65.120.84:8080/wallet.html" target="_blank" rel="noreferrer noopener">wallet address</a>.</div>
+
+        <h6 class="f7 gray tracked ttu mv3">Step 2</h6>
+        <div class="f4 mb4">Download a miner. We recommend <a class="blue link hover-dark-blue" href="https://github.com/PhamHuong92/VeoMiner" target="_blank" rel="noreferrer noopener">VeoMiner</a>.</div>
+
+        <h6 class="f7 gray tracked ttu mv3">Step 3</h6>
+        <div class="f4 mb4">Edit your miner config file to point to this pool: http://159.65.120.84:8085</a>.</div>
+
+        <h6 class="f7 gray tracked ttu mv3">Step 4</h6>
+        <div class="f4 mb4">Start your miner.</div>
+      </div>
+
+      <div class="content-block mt5">
+        <h3 class="f3 mb2">What?</h3>
+        <div class="f4 mb4">Amoveo is a blockchain meant for enforcement of investment and insurance contracts.</div>
+        <div class="f4 mb4"><a class="blue link hover-dark-blue" href="https://github.com/zack-bitcoin/amoveo" target="_blank" rel="noreferrer noopener">Learn more about Amoveo on Github</a>.</div>
+      </div>
+
+    </div>
+  </div>
   </body>
-  <h1>Amoveo Mining Pool</h1>
-  <p>2048 shares = about 1 veo</p>
-  <p>you get paid once you have more than 0.5 veo</p>
-  <p>send a message to zack on discord or telegram with your pubkey if you want to be paid early</p>
-  <p>example command to start a veominer: "D:\veominer_Windows_1.4\veominer.exe" BCjdlkTKyFh7BBx4grLUGFJCedmzo4e0XT1KJtbSwq5vCJHrPltHATB+maZ+Pncjnfvt9CsCcI9Rn1vO+fPLIV4= all 64 100 RaNdOmNeSs 65536 0 0 http://159.65.120.84:8085/ </p>
-  <a href="https://github.com/PhamHuong92/VeoMiner">you can download veominer here</a>
-  <br/>
+
   <script type="text/javascript" src="server.js" ></script>
   <script type="text/javascript" src="rpc.js" ></script>
   <script type="text/javascript" src="lookup_account.js" ></script>
   <script type="text/javascript" src="outstanding_shares.js" ></script>
+
 </html>
