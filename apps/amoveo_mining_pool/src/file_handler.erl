@@ -9,7 +9,7 @@ handle(Req, _) ->
     io:fwrite("file handler handle\n"),
     io:fwrite(F),
     io:fwrite("\n"),
-    %PrivDir0 = 
+    %PrivDir0 =
 	%case application:get_env(amoveo_core, kind) of
 	%    {ok, "production"} ->
 	%	code:priv_dir(amoveo_http);
@@ -25,7 +25,8 @@ handle(Req, _) ->
                <<"/lookup_account.js">> -> true;
                <<"/outstanding_shares.js">> -> true;
                <<"/main.html">> -> true;
-               X -> 
+               <<"/main-dark.html">> -> true;
+               X ->
                    io:fwrite("file handler block access to: "),
                    io:fwrite(X),
                    io:fwrite("\n"),
