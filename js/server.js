@@ -10,9 +10,9 @@ var pool_fee_amount = "0";
 var pool_min_payout_amount = "0.5";
 
 // Find elements
-var miner_location = document.querySelectorAll('#miner_location')[0];
-var pool_fee = document.querySelectorAll('#pool_fee')[0];
-var pool_min_payout = document.querySelectorAll('#pool_min_payout')[0];
+var miner_location = document.getElementById('miner_location');
+var pool_fee = document.getElementById('pool_fee');
+var pool_min_payout = document.getElementById('pool_min_payout');
 
 // Replace values in dynamic elements
 miner_location.innerHTML = "http://" + server_ip + ":" + server_port;
