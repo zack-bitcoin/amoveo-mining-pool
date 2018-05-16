@@ -1,3 +1,9 @@
+* we need more explanations about shares and total-shares.
+- shares get converted to veo
+- block rewards are distributed based on how many shares you have.
+
+* we should probably display the pubkey for the mining pool.
+
 Right now the miner only rewards a worker who finds a block.
 
 * mining pool should say the fee size, the number of active miners, last block made today, blocks made in last 24 hours, total veo distributed, current block height?
