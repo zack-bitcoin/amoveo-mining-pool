@@ -77,6 +77,8 @@ receive_work(<<Nonce:184>>, Pubkey) ->
 		I > Diff -> 
 		    found_block(<<Nonce:184>>),
 		    io:fwrite("found block\n"),
+		    io:fwrite(packer:pack({recent_work, H, Diff, Nonce})),
+		    io:fwrite("\n"),
 		    "found block";
 		true -> 
 		    "found work"
