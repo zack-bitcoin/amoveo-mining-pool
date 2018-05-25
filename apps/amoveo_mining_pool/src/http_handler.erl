@@ -11,9 +11,9 @@ handle(Req, State) ->
     ok = bad_work:check(IP),
     Data1 = jiffy:decode(Data0),
     Data2 = case Data1 of
-		[<<"mining_data">>, PubkeyWithWorkerID] ->
-		    {Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
-		    [<<"mining_data">>, Pubkey];
+		%[<<"mining_data">>, PubkeyWithWorkerID] ->
+		%    {Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
+		%    [<<"mining_data">>, Pubkey];
 		[<<"work">>, NonceAA, PubkeyWithWorkerID] ->
 		    {Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
 		    [<<"work">>, NonceAA, Pubkey];
