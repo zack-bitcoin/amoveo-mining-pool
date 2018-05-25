@@ -12,8 +12,8 @@ handle(Req, State) ->
     Data1 = jiffy:decode(Data0),
     Data2 = case Data1 of
 		[<<"mining_data">>, PubkeyWithWorkerID] ->
-		    {Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
-		    [<<"mining_data">>, Pubkey];
+		    %{Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
+		    [<<"mining_data">>, 0];
 		[<<"work">>, NonceAA, PubkeyWithWorkerID] ->
 		    {Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
 		    [<<"work">>, NonceAA, Pubkey];
