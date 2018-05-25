@@ -1,7 +1,7 @@
 -module(mining_pool_server).
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
-        start_cron/0, problem_api_mimic/0, receive_work/2]).
+        start_cron/0, problem_api_mimic/0, receive_work/3]).
 -record(data, {hash, nonce, diff, time}).
 %init(ok) -> {ok, new_problem_internal()}.
 init(ok) -> {ok, new_problem_internal()}.
@@ -58,7 +58,7 @@ start_cron() ->
     gen_server:cast(?MODULE, new_problem_cron),
     timer:sleep(500),
     start_cron().
-receive_work(<<Nonce:184>>, Pubkey) ->
+receive_work(<<Nonce:184>>, Pubkey, IP) ->
     %io:fwrite("mining pool server receive work\n"),
     %Pubkey = base64:decode(Pubkey0),
     D = problem(),
@@ -84,6 +84,7 @@ receive_work(<<Nonce:184>>, Pubkey) ->
 		    "found work"
 	    end;
 	true ->
+	    bad_work:received(IP),
 	    "invalid work"
     end.
 found_block(<<Nonce:184>>) ->

@@ -10,16 +10,11 @@ handle(Req, State) ->
     %io:fwrite(Data0),
     %io:fwrite("\n"),
     Data = packer:unpack(Data0),
-    case Data of
-	{work, _, _} ->
-	    %io:fwrite("work from IP "),
-	    %io:fwrite(packer:pack(IP)),
-	    %io:fwrite("\n"),
-	    %io:fwrite(Data0),
-	    %io:fwrite("\n"),
-	    ok;
-	_ -> ok
-    end,
+    D0 = case Data of
+	     {work, Nonce, Pubkey} ->
+		 mining_pool_server:receive_work(Nonce, Pubkey, IP);
+	     _ -> doit(Data)
+	 end,
     D0 = doit(Data),
     D = packer:pack(D0),
     Headers=[{<<"content-type">>,<<"application/octet-stream">>},
@@ -36,8 +31,8 @@ doit({mining_data, _}) ->
 	mining_pool_server:problem_api_mimic(),
     {ok, [Hash, Diff, Diff]};
 doit({mining_data}) -> 
-    mining_pool_server:problem_api_mimic();
-doit({work, Nonce, Pubkey}) ->
+    mining_pool_server:problem_api_mimic().
+%doit({work, Nonce, Pubkey}) ->
     %io:fwrite("attempted work \n"),
-    mining_pool_server:receive_work(Nonce, Pubkey).
+%    mining_pool_server:receive_work(Nonce, Pubkey, IP).
     
