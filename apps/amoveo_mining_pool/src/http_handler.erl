@@ -11,7 +11,7 @@ handle(Req, State) ->
     D = case bad_work:check(IP) of
 	    bad -> 
 		io:fwrite("ignore bad work\n"),
-		{ok, 0};
+		packer:pack({ok, 0});
 	    ok ->
 		Data1 = jiffy:decode(Data0),
 		Data2 = case Data1 of
