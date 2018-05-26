@@ -3,7 +3,8 @@
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
 	 give_share/1,got_reward/0,pay_veo/0,balance/1,
 	 check/0, final_reward/0,pay_veo/1,
-	 fix_total/0, total_veo/0]).
+	 fix_total/0, total_veo/0, save_cron/0,
+	 save/0]).
 
 -record(account, {pubkey, veo = 0, work = 1}).
 -define(File, "account.db").
@@ -24,7 +25,7 @@ init(ok) ->
 		end
 	end,
     {ok, A}.
-save(X) -> file:write_file(?File, term_to_binary(X)).
+save_internal(X) -> file:write_file(?File, term_to_binary(X)).
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
 terminate(_, _) -> io:format("died!"), ok.
@@ -53,13 +54,13 @@ handle_cast({give_share, Pubkey}, X) ->
 	    X2 = store(A, X),
 	    Total = dict:fetch(total, X2),
 	    X3 = dict:store(total, Total+1, X2),
-	    save(X3),
+	    %save_internal(X3),
 	    {noreply, X3}
     end;
 handle_cast({pay, Limit}, X) -> 
     %reduce how many veo they have in the pool, pay them veo on the blockchain.
     X2 = pay_internal(dict:fetch_keys(X), X, Limit),
-    save(X2),
+    %save_internal(X2),
     {noreply, X2};
 handle_cast({pay_single, Pubkey}, X) ->
     X3 = case dict:find(Pubkey, X) of
@@ -67,7 +68,7 @@ handle_cast({pay_single, Pubkey}, X) ->
 	     {ok, total} -> X;
 	     {ok, _} ->
 		 X2 = pay_internal([Pubkey], X, config:tx_fee()),
-		 save(X2),
+		 %save_internal(X2),
 		 X2
 	 end,
     {noreply, X3};
@@ -83,8 +84,11 @@ handle_cast(reward, X) ->
 		 Keys = dict:fetch_keys(X),
 		 gr2(Keys, PayPerShare, X)
 	 end,
-    save(X2),
+    %save_internal(X2),
     {noreply, X2};
+handle_cast(save, X) ->
+    save_internal(X),
+    {noreply, X};
 handle_cast(_, X) -> {noreply, X}.
 handle_call(balance, _From, X) -> 
     K = dict:fetch_keys(X),
@@ -103,6 +107,16 @@ give_share(Pubkey) -> gen_server:cast(?MODULE, {give_share, Pubkey}).
 got_reward() -> gen_server:cast(?MODULE, reward).
 pay_veo() -> gen_server:cast(?MODULE, {pay, config:payout_limit()}).
 pay_veo(Pubkey) -> gen_server:cast(?MODULE, {pay_single, Pubkey}).
+save() -> gen_server:cast(?MODULE, save).
+    
+save_cron() ->
+    spawn(fun() -> save_cron2() end).
+save_cron2() ->
+    timer:sleep(1000 * config:save_period()),
+    save(),
+    save_cron2().
+		  
+
 sum_balance([], _) -> 0;
 sum_balance([total|T], X) -> sum_balance(T, X);
 sum_balance([H|T], X) ->
