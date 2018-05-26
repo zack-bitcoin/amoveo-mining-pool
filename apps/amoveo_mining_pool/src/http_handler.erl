@@ -8,36 +8,34 @@ handle(Req, State) ->
     %io:fwrite("http handler got message: "),
     %io:fwrite(Data0),
     %io:fwrite("\n"),
-    case bad_work:check(IP) of
-	bad -> 
-	    io:fwrite("ignore bad work\n"),
-	    {ok, {ok, 0}, State};
-	ok ->
-	    Data1 = jiffy:decode(Data0),
-	    Data2 = case Data1 of
-			[<<"mining_data">>, PubkeyWithWorkerID] ->
+    D = case bad_work:check(IP) of
+	    bad -> 
+		io:fwrite("ignore bad work\n"),
+		{ok, 0};
+	    ok ->
+		Data1 = jiffy:decode(Data0),
+		Data2 = case Data1 of
+			    [<<"mining_data">>, PubkeyWithWorkerID] ->
 						%{Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
-			    [<<"mining_data">>, 0];
-			[<<"work">>, NonceAA, PubkeyWithWorkerID] ->
-			    {Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
+				[<<"mining_data">>, 0];
+			    [<<"work">>, NonceAA, PubkeyWithWorkerID] ->
+				{Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
 			    [<<"work">>, NonceAA, Pubkey];
-			_ -> Data1
-		    end,
-	    Data = packer:unpack_helper(Data2),
-
-						%Data = packer:unpack(Data0),
-	    D0 = case Data of
-		     {work, Nonce, Pubkey22} ->
-			 mining_pool_server:receive_work(Nonce, Pubkey22, IP);
-		     _ -> doit(Data)
-		 end,
-						%D0 = doit(Data),
-	    D = packer:pack(D0),
-	    Headers=[{<<"content-type">>,<<"application/octet-stream">>},
-		     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
-	    {ok, Req4} = cowboy_req:reply(200, Headers, D, Req3),
-	    {ok, Req4, State}
-    end.
+			    _ -> Data1
+			end,
+		Data = packer:unpack_helper(Data2),
+		%Data = packer:unpack(Data0),
+		D0 = case Data of
+			 {work, Nonce, Pubkey22} ->
+			     mining_pool_server:receive_work(Nonce, Pubkey22, IP);
+			 _ -> doit(Data)
+		     end,
+		packer:pack(D0)
+	end,
+    Headers=[{<<"content-type">>,<<"application/octet-stream">>},
+	     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
+    {ok, Req4} = cowboy_req:reply(200, Headers, D, Req3),
+    {ok, Req4, State}.
 doit({account, 2}) ->
     D = accounts:check(),%duplicating the database here is no good. It will be slow if there are too many accounts.
     {ok, dict:fetch(total, D)};
