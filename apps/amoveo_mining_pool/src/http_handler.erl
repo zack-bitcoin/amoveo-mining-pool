@@ -23,9 +23,6 @@ handle(Req, State) ->
 				[<<"work">>, NonceAA, Pubkey];
 			    _ -> Data1
 			end,
-		io:fwrite("data 0 is "),
-		io:fwrite(Data0),
-		io:fwrite("\n"),
 		Data = packer:unpack_helper(Data2),
 		%Data = packer:unpack(Data0),
 		D0 = case Data of
