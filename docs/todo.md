@@ -1,3 +1,6 @@
+* there was an update called "don't crash from bad work". This change may have made it impossible for us to find blocks somehow.
+
+
 * we need more explanations about shares and total-shares.
 - shares get converted to veo
 - block rewards are distributed based on how many shares you have.

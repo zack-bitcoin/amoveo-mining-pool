@@ -17,10 +17,10 @@ handle(Req, State) ->
 		Data2 = case Data1 of
 			    [<<"mining_data">>, PubkeyWithWorkerID] ->
 						%{Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
-				[<<"mining_data">>, 0];
+				[<<"mining_data">>, <<"0">>];
 			    [<<"work">>, NonceAA, PubkeyWithWorkerID] ->
-				{Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
-			    [<<"work">>, NonceAA, Pubkey];
+				{Pubkey, _WorkerID} = pub_split(PubkeyWithWorkerID),
+				[<<"work">>, NonceAA, Pubkey];
 			    _ -> Data1
 			end,
 		Data = packer:unpack_helper(Data2),

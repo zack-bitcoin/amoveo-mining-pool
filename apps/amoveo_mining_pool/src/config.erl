@@ -22,3 +22,5 @@ payout_limit() -> 50000000.%when a miner has more than this much veo, it automat
 refresh_period() -> 2.%how often we get a new problem from the server to work on. in seconds
 confirmations() -> 5. %how many confirmations does a block need before we can pay out the reward
 spend_log_file() -> "spend.log".
+save_period() -> 600.%10 minutes
+    

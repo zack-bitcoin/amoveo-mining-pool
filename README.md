@@ -36,6 +36,10 @@ To disconnect, and allow it to run in the background, hold the CTRL key, and pre
 Then to turn it off, make sure you are attached, and run:
 
 ```
+accounts:save().
+```
+then run:
+```
 halt().
 ```
 

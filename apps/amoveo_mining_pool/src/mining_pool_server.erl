@@ -53,11 +53,16 @@ problem_api_mimic() ->
     {ok, [Hash, Nonce, Diff]}.
 new_problem() -> gen_server:call(?MODULE, new_problem).
 start_cron() ->
+    spawn(fun() -> 
+		  start_cron2() 
+	  end).
+		  
+start_cron2() ->
     %This checks every 0.1 seconds, to see if it is time to get a new problem.
     %We get a new problem every ?RefreshPeriod.
-    gen_server:cast(?MODULE, new_problem_cron),
     timer:sleep(500),
-    start_cron().
+    gen_server:cast(?MODULE, new_problem_cron),
+    start_cron2().
 receive_work(<<Nonce:184>>, Pubkey, IP) ->
     %io:fwrite("mining pool server receive work\n"),
     %Pubkey = base64:decode(Pubkey0),

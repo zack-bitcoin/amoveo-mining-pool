@@ -5,10 +5,8 @@
 start(_StartType, _StartArgs) ->
     inets:start(),
     start_http(),
-    spawn(fun() ->
-                  timer:sleep(1000),
-                  mining_pool_server:start_cron()
-          end),
+    accounts:save_cron(),
+    mining_pool_server:start_cron(),
     amoveo_mining_pool_sup:start_link().
 stop(_State) -> ok.
 start_http() ->
