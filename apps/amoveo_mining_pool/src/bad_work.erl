@@ -18,7 +18,8 @@ handle_call({check, IP}, _From, X) ->
 		      B = timer:now_diff(erlang:timestamp(), T),
 		      if
 			  B > 3000000 -> {ok, dict:erase(IP, X)};
-			  true -> {bad, X}
+			  %true -> {bad, X}
+			  true -> {ok, X}
 		      end
 	      end,
     {reply, A, X2};
