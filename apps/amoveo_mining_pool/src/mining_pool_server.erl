@@ -80,6 +80,7 @@ receive_work(<<Nonce:184>>, Pubkey, IP) ->
 	    accounts:give_share(Pubkey),
 	    if 
 		I > Diff -> 
+		    io:fwrite("found block 000\n"),
 		    found_block(<<Nonce:184>>),
 		    io:fwrite("found block\n"),
 		    io:fwrite(packer:pack({recent_work, H, Diff, Nonce})),
@@ -93,7 +94,7 @@ receive_work(<<Nonce:184>>, Pubkey, IP) ->
 	    "invalid work"
     end.
 found_block(<<Nonce:184>>) ->
-    BinNonce = base64:encode(<<Nonce:184>>),
+    %BinNonce = base64:encode(<<Nonce:184>>),
     Data = {work, <<Nonce:184>>, 0},
     _X = talker:talk_helper(Data, config:full_node(), 10),%spend 8 seconds checking 5 times per second if we can start mining again.
     %accounts:got_reward(),

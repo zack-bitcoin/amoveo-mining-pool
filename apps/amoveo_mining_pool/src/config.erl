@@ -17,7 +17,7 @@ share_block_ratio() -> 11.% for every block, we pay out 2^share_block_ratio many
 %so if this is 4, that means we pay 16 shares for every block we find on average. if it is 10, then we pay 1024 shares for every block we find.
 rt() -> 9.%rewards are smoothed out over the last rt()+1 blocks.
 ratio() -> {rt(), rt()+1}.
-tx_fee() -> 152000.%when you shut off the pool, it pays out to everyone who has more than this much veo.
+tx_fee() -> 100000.%when you shut off the pool, it pays out to everyone who has more than this much veo.
 payout_limit() -> 50000000.%when a miner has more than this much veo, it automatically pays out to you.
 refresh_period() -> 2.%how often we get a new problem from the server to work on. in seconds
 confirmations() -> 5. %how many confirmations does a block need before we can pay out the reward
