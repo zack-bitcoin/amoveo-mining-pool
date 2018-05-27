@@ -5,28 +5,15 @@ init(_Type, Req, _Opts) -> {ok, Req, no_state}.
 terminate(_Reason, _Req, _State) -> ok.
 handle(Req, State) ->
     {ok, Data0, Req2} = cowboy_req:body(Req, [{length, 200}, {period, 200}]),
-    {{IP, _}, Req3a} = cowboy_req:peer(Req2),
-    {ContentType, Req3b} = cowboy_req:header(<<"content-type">>, Req3a),
-    {ContentLength, Req3c} = cowboy_req:header(<<"content-length">>, Req3b),
-    {HeaderVal, Req3} = cowboy_req:headers(Req3c),
-    %<<"application/octet-stream">> = ContentType,
-    %text/plain; charset=utf-8
-    %D = %if
-	    %undefined == ContentLength -> <<>>;
-	    %true ->
-		%Size  = list_to_integer(binary_to_list(ContentLength)),
-		%if
-		%    Size > 134 -> <<>>;
-		%    true ->
-    Bool = contains(hd("."), 135, Data0),
+    {{IP, _}, Req3} = cowboy_req:peer(Req2),
+    %Bool = contains(hd("."), 150, Data0),
+    Bool = false,
     D = if
-		Bool -> <<>>;
-		true ->
-		    Data = packer:unpack(Data0),
-		    D0 = doit(Data),
-		    packer:pack(D0)
-		%end
-		%end
+	    Bool -> <<>>;
+	    true ->
+		Data = packer:unpack(Data0),
+		D0 = doit(Data),
+		packer:pack(D0)
 	end,
     Headers=[{<<"content-type">>,<<"application/octet-stream">>},
 	     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
