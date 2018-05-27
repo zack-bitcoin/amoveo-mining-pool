@@ -11,22 +11,22 @@ handle(Req, State) ->
     {HeaderVal, Req3} = cowboy_req:headers(Req3c),
     %<<"application/octet-stream">> = ContentType,
     %text/plain; charset=utf-8
+    %D = %if
+	    %undefined == ContentLength -> <<>>;
+	    %true ->
+		%Size  = list_to_integer(binary_to_list(ContentLength)),
+		%if
+		%    Size > 134 -> <<>>;
+		%    true ->
+    Bool = contains(hd("."), 135, Data0),
     D = if
-	    undefined == ContentLength -> <<>>;
-	    true ->
-		Size  = list_to_integer(binary_to_list(ContentLength)),
-		if
-		    Size > 134 -> <<>>;
-		    true ->
-			Bool = contains(hd("."), 135, Data0),
-			if
-			    Bool -> <<>>;
-			    true ->
-				Data = packer:unpack(Data0),
-				D0 = doit(Data),
-				packer:pack(D0)
-			end
-		end
+		Bool -> <<>>;
+		true ->
+		    Data = packer:unpack(Data0),
+		    D0 = doit(Data),
+		    packer:pack(D0)
+		%end
+		%end
 	end,
     Headers=[{<<"content-type">>,<<"application/octet-stream">>},
 	     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
