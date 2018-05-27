@@ -49,6 +49,7 @@ doit({work, Nonce, Pubkey}) ->
     
 contains(_, 0, _) -> true;
 contains(_, _, <<>>) -> false;
+contains(_, _, <<10, _/binary>>) -> true;
 contains(N, _, <<N, _/binary>>) -> true;
 contains(N, A, <<_, B/binary>>) ->
     contains(N, A-1, B).
