@@ -11,9 +11,10 @@ handle(Req, State) ->
     {HeaderVal, Req3} = cowboy_req:headers(Req3c),
     %<<"application/octet-stream">> = ContentType,
     %text/plain; charset=utf-8
+    Size  = list_to_integer(binary_to_list(ContentLength)),
     if
 	undefined == ContentLength -> ok;
-	134 < list_to_integer(binary_to_list(ContentLength)) ->
+	134 < Size ->
 	    ok;
 	true ->
 	    io:fwrite(packer:pack(IP)),
