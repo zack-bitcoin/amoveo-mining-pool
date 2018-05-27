@@ -4,7 +4,7 @@
 init(_Type, Req, _Opts) -> {ok, Req, no_state}.
 terminate(_Reason, _Req, _State) -> ok.
 handle(Req, State) ->
-    {ok, Data0, Req2} = cowboy_req:body(Req),
+    {ok, Data0, Req2} = cowboy_req:body(Req, [{length, 200}, {period, 200}]),
     {{IP, _}, Req3a} = cowboy_req:peer(Req2),
     {ContentType, Req3b} = cowboy_req:header(<<"content-type">>, Req3a),
     {ContentLength, Req3c} = cowboy_req:header(<<"content-length">>, Req3b),
