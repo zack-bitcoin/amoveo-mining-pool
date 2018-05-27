@@ -18,9 +18,14 @@ handle(Req, State) ->
 		if
 		    Size > 134 -> <<>>;
 		    true ->
-			Data = packer:unpack(Data0),
-			D0 = doit(Data),
-			packer:pack(D0)
+			Bool = contains(hd("."), 135, Data0),
+			if
+			    Bool -> <<>>;
+			    true ->
+				Data = packer:unpack(Data0),
+				D0 = doit(Data),
+				packer:pack(D0)
+			end
 		end
 	end,
     Headers=[{<<"content-type">>,<<"application/octet-stream">>},
@@ -42,3 +47,8 @@ doit({work, Nonce, Pubkey}) ->
     %io:fwrite("attempted work \n"),
     mining_pool_server:receive_work(Nonce, Pubkey).
     
+contains(_, 0, _) -> true;
+contains(_, _, <<>>) -> false;
+contains(N, _, <<N, _/binary>>) -> true;
+contains(N, A, <<_, B/binary>>) ->
+    contains(N, A-1, B).
