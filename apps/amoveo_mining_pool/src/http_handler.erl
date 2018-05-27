@@ -11,13 +11,10 @@ handle(Req, State) ->
     {HeaderVal, Req3} = cowboy_req:headers(Req3c),
     %<<"application/octet-stream">> = ContentType,
     %text/plain; charset=utf-8
+    false = undefined == ContentLength,
     Size  = list_to_integer(binary_to_list(ContentLength)),
-    if
-	undefined == ContentLength -> ok;
-	134 < Size ->
-	    ok;
-	true ->
-	    io:fwrite(packer:pack(IP)),
+    false = Size > 134,
+    io:fwrite(packer:pack(IP)),
     %io:fwrite("\n"),
     %io:fwrite(ContentType),
     %io:fwrite("\n"),
@@ -26,24 +23,23 @@ handle(Req, State) ->
     %io:fwrite("http handler got message: "),
     %io:fwrite(Data0),
     %io:fwrite("\n"),
-	    Data = packer:unpack(Data0),
-	    case Data of
-		{work, _, _} ->
+    Data = packer:unpack(Data0),
+    case Data of
+	{work, _, _} ->
 	    %io:fwrite("work from IP "),
 	    %io:fwrite(packer:pack(IP)),
 	    %io:fwrite("\n"),
 	    %io:fwrite(Data0),
 	    %io:fwrite("\n"),
-		    ok;
-		_ -> ok
-	    end,
-	    D0 = doit(Data),
-	    D = packer:pack(D0),
-	    Headers=[{<<"content-type">>,<<"application/octet-stream">>},
-		     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
-	    {ok, Req4} = cowboy_req:reply(200, Headers, D, Req3),
-	    {ok, Req4, State}
-    end.
+	    ok;
+	_ -> ok
+    end,
+    D0 = doit(Data),
+    D = packer:pack(D0),
+    Headers=[{<<"content-type">>,<<"application/octet-stream">>},
+	     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
+    {ok, Req4} = cowboy_req:reply(200, Headers, D, Req3),
+    {ok, Req4, State}.
 doit({account, 2}) ->
     D = accounts:check(),%duplicating the database here is no good. It will be slow if there are too many accounts.
     {ok, dict:fetch(total, D)};
