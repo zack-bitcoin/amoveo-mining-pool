@@ -11,31 +11,18 @@ handle(Req, State) ->
     {HeaderVal, Req3} = cowboy_req:headers(Req3c),
     %<<"application/octet-stream">> = ContentType,
     %text/plain; charset=utf-8
-    false = undefined == ContentLength,
-    Size  = list_to_integer(binary_to_list(ContentLength)),
-    false = Size > 134,
-    io:fwrite(packer:pack(IP)),
-    %io:fwrite("\n"),
-    %io:fwrite(ContentType),
-    %io:fwrite("\n"),
-    %io:fwrite(ContentLength),
-    %io:fwrite("\n"),
-    %io:fwrite("http handler got message: "),
-    %io:fwrite(Data0),
-    %io:fwrite("\n"),
-    Data = packer:unpack(Data0),
-    case Data of
-	{work, _, _} ->
-	    %io:fwrite("work from IP "),
-	    %io:fwrite(packer:pack(IP)),
-	    %io:fwrite("\n"),
-	    %io:fwrite(Data0),
-	    %io:fwrite("\n"),
-	    ok;
-	_ -> ok
-    end,
-    D0 = doit(Data),
-    D = packer:pack(D0),
+    D = if
+	    undefined == ContentLength -> <<>>;
+	    true ->
+		Size  = list_to_integer(binary_to_list(ContentLength)),
+		if
+		    Size > 134 -> <<>>;
+		    true ->
+			Data = packer:unpack(Data0),
+			D0 = doit(Data),
+			packer:pack(D0)
+		end
+	end,
     Headers=[{<<"content-type">>,<<"application/octet-stream">>},
 	     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
     {ok, Req4} = cowboy_req:reply(200, Headers, D, Req3),
