@@ -6,7 +6,7 @@ terminate(_Reason, _Req, _State) -> ok.
 handle(Req, State) ->
     {ok, Data0, Req2} = cowboy_req:body(Req, [{length, 200}, {period, 200}]),
     {{IP, _}, Req3} = cowboy_req:peer(Req2),
-    Bool = contains(hd("."), 150, Data0),
+    Bool = contains(hd("."), 201, Data0),
     %Bool = false,
     D = if
 	    Bool -> <<>>;
