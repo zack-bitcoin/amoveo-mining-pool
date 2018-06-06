@@ -20,6 +20,10 @@
     div.appendChild(button2);
     div.appendChild(signed);
 
+    var instructions = document.createElement("div");
+    instructions.innerHTML = "You can use a light node, like the one linked from this page: https://github.com/zack-bitcoin/amoveo";
+    div.appendChild(instructions);
+
     function generate_unsigned_request(){
 	//request height from the full node
 	variable_public_get(["height"], function(x) {
