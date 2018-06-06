@@ -23,9 +23,9 @@ handle(Req, State) ->
 				[<<"work">>, NonceAA, Pubkey];
 			    _ -> Data1
 			end,
-		io:fwrite("data 0 is "),
-		io:fwrite(Data0),
-		io:fwrite("\n"),
+		%io:fwrite("data 0 is "),
+		%io:fwrite(Data0),
+		%io:fwrite("\n"),
 		Data = packer:unpack_helper(Data2),
 		%Data = packer:unpack(Data0),
 		D0 = case Data of
@@ -44,6 +44,21 @@ doit({account, 2}) ->
     {ok, dict:fetch(total, D)};
 doit({account, Pubkey}) -> 
     accounts:balance(Pubkey);
+doit({spend, SR}) ->
+    spawn(fun() ->
+		  R = element(2, SR),
+		  {27, Pubkey, Height} = R,
+		  {ok, NodeHeight} = packer:unpack(talker:talk_helper({height}, config:full_node(), 10)),
+		  true = NodeHeight < Height + 3,
+		  true = NodeHeight > Height - 1,
+		  Sig = element(3, SR),
+		  true = sign:verify_sig(R, Sig, Pubkey),
+		  accounts:pay_veo(Pubkey)
+	  end),
+    {ok, 0};
+doit({height}) ->
+    {ok, NodeHeight} = packer:unpack(talker:talk_helper({height}, config:full_node(), 10)),
+    {ok, NodeHeight};
 doit({mining_data, _}) -> 
     {ok, [Hash, Nonce, Diff]} = 
 	mining_pool_server:problem_api_mimic(),

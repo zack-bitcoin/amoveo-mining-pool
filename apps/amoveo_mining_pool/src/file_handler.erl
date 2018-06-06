@@ -24,6 +24,7 @@ handle(Req, _) ->
                <<"/rpc.js">> -> true;
                <<"/lookup_account.js">> -> true;
                <<"/outstanding_shares.js">> -> true;
+               <<"/payout.js">> -> true;
                <<"/main.html">> -> true;
                X -> 
                    io:fwrite("file handler block access to: "),
@@ -39,9 +40,10 @@ handle(Req, _) ->
     {ok, Req2} = cowboy_req:reply(200, Headers, Text, Req),
     {ok, Req2, File}.
 read_file(F) ->
-    {ok, File } = file:open(F, [read, binary, raw]),
-    {ok, O} =file:pread(File, 0, filelib:file_size(F)),
-    file:close(File),
+    {ok, O} = file:read_file(F),
+    %{ok, File } = file:open(F, [read, binary, raw]),
+    %{ok, O} =file:pread(File, 0, filelib:file_size(F)),
+    %file:close(File),
     O.
 init(_Type, Req, _Opts) -> {ok, Req, []}.
 terminate(_Reason, _Req, _State) -> ok.
