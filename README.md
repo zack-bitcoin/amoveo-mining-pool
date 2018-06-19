@@ -2,6 +2,8 @@
 Amoveo Mining Pool
 ===========
 
+Warning, if you are re-syncing your amoveo full node, make sure to turn off the mining pool first.
+
 This is a mining pool for the [Amoveo blockchain](https://github.com/zack-bitcoin/amoveo).
 
 You must be in `sync_mode:normal().` in order to run the mining pool.

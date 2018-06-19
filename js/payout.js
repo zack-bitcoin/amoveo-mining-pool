@@ -21,7 +21,7 @@
     div.appendChild(signed);
 
     var instructions = document.createElement("div");
-    instructions.innerHTML = "You can use a light node, like the one linked from this page: https://github.com/zack-bitcoin/amoveo";
+    instructions.innerHTML = "To sign the request use a light node, like this one: http://159.65.120.84:8080/wallet.html ";
     div.appendChild(instructions);
 
     function generate_unsigned_request(){

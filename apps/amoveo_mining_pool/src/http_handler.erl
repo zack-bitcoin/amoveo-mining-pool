@@ -45,16 +45,16 @@ doit({account, 2}) ->
 doit({account, Pubkey}) -> 
     accounts:balance(Pubkey);
 doit({spend, SR}) ->
-    spawn(fun() ->
-		  R = element(2, SR),
-		  {27, Pubkey, Height} = R,
-		  {ok, NodeHeight} = packer:unpack(talker:talk_helper({height}, config:full_node(), 10)),
-		  true = NodeHeight < Height + 3,
-		  true = NodeHeight > Height - 1,
-		  Sig = element(3, SR),
-		  true = sign:verify_sig(R, Sig, Pubkey),
-		  accounts:pay_veo(Pubkey)
-	  end),
+    spawn(
+      fun() ->R = element(2, SR),
+	      {27, Pubkey, Height} = R,
+	      {ok, NodeHeight} = packer:unpack(talker:talk_helper({height}, config:full_node(), 10)),
+	      true = NodeHeight < Height + 3,
+	      true = NodeHeight > Height - 1,
+	      Sig = element(3, SR),
+	      true = sign:verify_sig(R, Sig, Pubkey),
+	      accounts:pay_veo(Pubkey)
+      end),
     {ok, 0};
 doit({height}) ->
     {ok, NodeHeight} = packer:unpack(talker:talk_helper({height}, config:full_node(), 10)),
