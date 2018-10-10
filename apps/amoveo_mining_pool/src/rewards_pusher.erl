@@ -19,7 +19,7 @@ new_height_internal() ->
     {ok, H} = packer:unpack(talker:talk_helper({height, 1}, config:full_node(), 3)),
     H2 = H - config:confirmations(),
     Old = rewards:check(),
-    Many = H2 - Old,
+    Many = min(H2 - Old, 100),
     if 
 	(Many > 0) and (H2 > 0) ->
 	    {ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
