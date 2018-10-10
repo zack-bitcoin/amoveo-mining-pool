@@ -23,6 +23,11 @@ new_height_internal() ->
     if 
 	(Many > 0) and (H2 > 0) ->
 	    {ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
+	    io:fwrite("rewards pusher \n"),
+	    io:fwrite(integer_to_list(Many)),
+	    io:fwrite("\n"),
+	    io:fwrite(integer_to_list(H2)),
+	    io:fwrite("\n"),
 	    {ok, Blocks} = packer:unpack(talker:talk_helper({blocks, Many, H2}, config:external(), 3)),
 	    pay_rewards(Blocks, ServerPub),
 	    rewards:update(H2);
