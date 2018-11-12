@@ -2,4 +2,4 @@
 ./rebar3 compile
 ./rebar3 as prod release
 # then launch the software
-./_build/prod/rel/amoveo_mining_pool/bin/amoveo_mining_pool console
+./_build/prod/rel/amoveo_mining_pool/bin/amoveo_mining_pool start
