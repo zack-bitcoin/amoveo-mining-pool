@@ -2,7 +2,7 @@
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
         start_cron/0, problem_api_mimic/0, receive_work/3]).
--record(data, {hash, nonce, diff, time}).
+-record(data, {hash, nonce, diff, time, solutions = dict:new()}).
 %init(ok) -> {ok, new_problem_internal()}.
 init(ok) -> {ok, new_problem_internal()}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
@@ -15,21 +15,25 @@ handle_cast(new_problem_cron, Y) ->
     RP = config:refresh_period(),
     X = if 
             (((N-T) > RP) or ((N-T) < 0)) -> 
-		case new_problem_internal() of
-		    ok -> Y;
-		    Z -> Z
-		end;
+		new_problem_internal();
             true -> Y
         end,
     {noreply, X};
+handle_cast({found_solution, S}, Y) ->
+    D2 = dict:store(S, 0, Y#data.solutions),
+    Y2 = Y#data{solutions = D2},
+    {noreply, Y2};
 handle_cast(_, X) -> {noreply, X}.
+handle_call({check_solution, S}, Y) ->
+    X = case dict:find(S, Y#data.solutions) of
+	    error -> true;
+	    {ok, _} -> false
+	end,
+    {reply, X, Y};
 handle_call(problem, _From, X) -> 
     {reply, X, X};
 handle_call(new_problem, _From, Y) -> 
-    X = case new_problem_internal() of
-	    ok -> Y;
-	    Z -> Z
-	end,
+    X = new_problem_internal(),
     {reply, X, X};
 handle_call(_, _From, X) -> {reply, X, X}.
 time_now() ->
@@ -76,6 +80,8 @@ receive_work(<<Nonce:184>>, Pubkey, IP) ->
     I = pow:hash2integer(hash:doit(Y), 1),
     if
 	I > EasyDiff -> 
+	    true = check_solution(Nonce),
+	    found_solution(Nonce),
 	    %io:fwrite("found share\n"),
 	    accounts:give_share(Pubkey),
 	    if 
