@@ -1,7 +1,8 @@
 -module(mining_pool_server).
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
-        start_cron/0, problem_api_mimic/0, receive_work/3]).
+        start_cron/0, problem_api_mimic/0, receive_work/3,
+	check_solution/1, found_solution/1]).
 -record(data, {hash, nonce, diff, time, solutions = dict:new()}).
 %init(ok) -> {ok, new_problem_internal()}.
 init(ok) -> {ok, new_problem_internal()}.
@@ -24,7 +25,7 @@ handle_cast({found_solution, S}, Y) ->
     Y2 = Y#data{solutions = D2},
     {noreply, Y2};
 handle_cast(_, X) -> {noreply, X}.
-handle_call({check_solution, S}, Y) ->
+handle_call({check_solution, S}, _, Y) ->
     X = case dict:find(S, Y#data.solutions) of
 	    error -> true;
 	    {ok, _} -> false
@@ -112,3 +113,7 @@ found_block(<<Nonce:184>>) ->
     ok.
 easy_diff(D) ->
     max(257, D - (256 * config:share_block_ratio())).
+check_solution(N) ->
+    gen_server:call(?MODULE, {check_solution, N}).
+found_solution(N) ->
+    gen_server:cast(?MODULE, {found_solution, N}).
