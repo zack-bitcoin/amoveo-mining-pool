@@ -2,8 +2,8 @@
 
 -export([init/3, handle/2, terminate/3]).
 %example of talking to this handler:
-%httpc:request(post, {"http://127.0.0.1:3011/", [], "application/octet-stream", "echo"}, [], []).
-%curl -i -d '[-6,"test"]' http://localhost:3011
+%httpc:request(post, {"http://159.65.25.152/", [], "application/octet-stream", "echo"}, [], []).
+%curl -i -d '[-6,"test"]' http://localhost:8080
 handle(Req, _) ->
     {F, _} = cowboy_req:path(Req),
     io:fwrite("file handler handle\n"),
