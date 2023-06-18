@@ -21,8 +21,14 @@
     div.appendChild(signed);
 
     var instructions = document.createElement("div");
-    instructions.innerHTML = "To sign the request use a light node, like this one: http://159.65.120.84:8080/wallet.html ";
+    instructions_link = document.createElement("a");
+    instructions_link.innerHTML = "light node";
+    instructions_link.href = "https://github.com/zack-bitcoin/light-node-amoveo";
+    instructions_link.target = "_blank";
+    instructions.innerHTML = "To sign the request use a ";
+    instructions.appendChild(instructions_link);
     div.appendChild(instructions);
+    //div.appendChild(instructions_link);
 
     function generate_unsigned_request(){
 	//request height from the full node

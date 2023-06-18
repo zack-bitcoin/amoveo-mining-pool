@@ -1,10 +1,14 @@
 -module(http_handler).
--export([init/3, handle/2, terminate/3, doit/1]).
+-export([init/3, init/2, handle/2, terminate/3, doit/1]).
 init(_Type, Req, _Opts) -> {ok, Req, no_state}.
+init(Req0, Opts) ->
+    handle(Req0, Opts).	
 terminate(_Reason, _Req, _State) -> ok.
 handle(Req, State) ->
-    {ok, Data0, Req2} = cowboy_req:body(Req),
-    {{IP, _}, Req3} = cowboy_req:peer(Req2),
+    %{ok, Data0, Req2} = cowboy_req:body(Req),
+    {ok, Data0, _Req2} = cowboy_req:read_body(Req),
+    %{{IP, _}, Req3} = cowboy_req:peer(Req2),
+    {IP, _} = cowboy_req:peer(Req),
     %io:fwrite("http handler got message: "),
     %io:fwrite(Data0),
     %io:fwrite("\n"),
@@ -35,9 +39,9 @@ handle(Req, State) ->
 		     end,
 		packer:pack(D0)
 	end,
-    Headers=[{<<"content-type">>,<<"application/octet-stream">>},
-	     {<<"Access-Control-Allow-Origin">>, <<"*">>}],
-    {ok, Req4} = cowboy_req:reply(200, Headers, D, Req3),
+    Headers = #{ <<"content-type">> => <<"application/octet-stream">>,
+	       <<"Access-Control-Allow-Origin">> => <<"*">>},
+    Req4 = cowboy_req:reply(200, Headers, D, Req),
     {ok, Req4, State}.
 doit({account, 2}) ->
     D = accounts:check(),%duplicating the database here is no good. It will be slow if there are too many accounts.

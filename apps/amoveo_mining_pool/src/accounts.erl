@@ -8,6 +8,7 @@
 
 -record(account, {pubkey, veo = 0, work = 1}).
 -define(File, "account.db").
+
 initial_state() ->
     Shares = config:rt() * 
 	round(math:pow(2, config:share_block_ratio())),
@@ -15,6 +16,8 @@ initial_state() ->
     A = #account{pubkey = base64:decode(config:pubkey()),
 		 work = Shares},
     store(A, D2).
+
+
 init(ok) -> 
     A = case file:read_file(?File) of
 	    {error, enoent} -> initial_state();
@@ -28,7 +31,10 @@ init(ok) ->
 save_internal(X) -> file:write_file(?File, term_to_binary(X)).
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
-terminate(_, _) -> io:format("died!"), ok.
+terminate(_, X) -> 
+    io:format("accounts died!"), 
+    save_internal(X),
+    ok.
 handle_info(_, X) -> {noreply, X}.
 handle_cast(fix_total, X) -> 
     Keys = dict:fetch_keys(X),

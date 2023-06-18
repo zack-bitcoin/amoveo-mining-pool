@@ -1,14 +1,15 @@
 -module(file_handler).
 
--export([init/3, handle/2, terminate/3]).
+-export([init/3, handle/2, terminate/3, init/2]).
 %example of talking to this handler:
 %httpc:request(post, {"http://127.0.0.1:3011/", [], "application/octet-stream", "echo"}, [], []).
 %curl -i -d '[-6,"test"]' http://localhost:3011
+init(A, B) ->
+    handle(A, B).
 handle(Req, _) ->
-    {F, _} = cowboy_req:path(Req),
-    io:fwrite("file handler handle\n"),
-    io:fwrite(F),
-    io:fwrite("\n"),
+    %io:fwrite("file_handler handler\n"),
+    %{F, _} = cowboy_req:path(Req),
+    F = cowboy_req:path(Req),
     %PrivDir0 = 
 	%case application:get_env(amoveo_core, kind) of
 	%    {ok, "production"} ->
@@ -33,11 +34,15 @@ handle(Req, _) ->
                    false
            end,
     File = << PrivDir/binary, F/binary>>,
-    {ok, _Data, _} = cowboy_req:body(Req),
-    Headers = [{<<"content-type">>, <<"text/html">>},
-    {<<"Access-Control-Allow-Origin">>, <<"*">>}],
+    %{ok, _Data, _} = cowboy_req:body(Req),
+    {ok, _Data, _} = cowboy_req:read_body(Req),
+    %Headers = [{<<"content-type">>, <<"text/html">>},
+    %{<<"Access-Control-Allow-Origin">>, <<"*">>}],
+    Headers = #{<<"content-type">> => <<"text/html">>,
+                <<"Access-Control-Allow-Origin">> => <<"*">>},
     Text = read_file(File),
-    {ok, Req2} = cowboy_req:reply(200, Headers, Text, Req),
+    %{ok, Req2} = cowboy_req:reply(200, Headers, Text, Req),
+    Req2 = cowboy_req:reply(200, Headers, Text, Req),
     {ok, Req2, File}.
 read_file(F) ->
     {ok, O} = file:read_file(F),

@@ -18,7 +18,7 @@ talk_helper(Data, Peer, N) ->
         true -> 
             case talk_helper2(Data, Peer) of
                 {ok, {_Status, _Headers, []}} ->
-		    io:fwrite("first failure  mode \n"),
+		    %io:fwrite("first failure  mode \n"),
                     timer:sleep(100),
                     talk_helper(Data, Peer, N - 1);
                 {ok, {_, _, R}} -> R;

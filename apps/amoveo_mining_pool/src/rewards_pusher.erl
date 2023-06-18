@@ -23,7 +23,8 @@ new_height_internal() ->
     if 
 	(Many > 0) and (H2 > 0) ->
 	    {ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
-	    {ok, Blocks} = packer:unpack(talker:talk_helper({blocks, Many, H2 - Many}, config:external(), 3)),
+	    {ok, Blocks} = packer:unpack(talker:talk_helper({blocks, Many, H2 - Many}, config:external(), 3)),%this line fails.
+            %io:fwrite({Many, H2, H}),
 	    pay_rewards(Blocks, ServerPub),
 	    rewards:update(H2);
 	true -> ok
@@ -32,11 +33,15 @@ pay_rewards([], _ServerPub) ->
     accounts:pay_veo();
 pay_rewards([H|T], ServerPub) ->
     Txs = element(11, H),
-    CB = hd(Txs),
-    Pub = base64:encode(element(2, CB)),
-    if
-	Pub == ServerPub -> accounts:got_reward();
-	true -> ok
+    case Txs of
+        [] -> io:fwrite("block 0\n");
+        _ -> 
+            CB = hd(Txs),
+            Pub = base64:encode(element(2, CB)),
+            if
+                Pub == ServerPub -> accounts:got_reward();
+                true -> ok
+            end
     end,
     pay_rewards(T, ServerPub).
     

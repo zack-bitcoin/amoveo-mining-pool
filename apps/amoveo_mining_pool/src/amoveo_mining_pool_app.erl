@@ -6,7 +6,7 @@ start(_StartType, _StartArgs) ->
     inets:start(),
     start_http(),
     mining_pool_server:start_cron(),
-    accounts:save_cron(),
+    %accounts:save_cron(),%switched to the strategy where we do this every time we find a block.
     amoveo_mining_pool_sup:start_link().
 stop(_State) -> ok.
 start_http() ->
@@ -18,9 +18,13 @@ start_http() ->
 		  {"/", http_handler, []}
 		 ]}]),
     {ok, Port} = application:get_env(amoveo_mining_pool, port),
-    {ok, _} = cowboy:start_http(
-                http, 100,
-                [{ip, {0, 0, 0, 0}}, {port, Port}],
-                [{env, [{dispatch, Dispatch}]}]),
+    IP = {0,0,0,0},
+    %{ok, _} = cowboy:start_http(
+    %            http, 100,
+    %            [{ip, IP}, {port, Port}],
+    %            [{env, [{dispatch, Dispatch}]}]),
+    {ok, _} = cowboy:start_clear(
+                http, [{ip, IP}, {port, Port}],
+                #{env => #{dispatch => Dispatch}}),
     ok.
     

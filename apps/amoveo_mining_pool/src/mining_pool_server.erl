@@ -68,9 +68,14 @@ start_cron2() ->
     timer:sleep(500),
     gen_server:cast(?MODULE, new_problem_cron),
     start_cron2().
-receive_work(<<Nonce:184>>, Pubkey, IP) ->
+%receive_work(<<Nonce:184>>, Pubkey, IP) ->
+receive_work(Nonce0, Pubkey, IP) ->
     %io:fwrite("mining pool server receive work\n"),
     %Pubkey = base64:decode(Pubkey0),
+    Nonce = case Nonce0 of
+                <<X:184>> -> X;
+                <<X:256>> -> X
+            end,
     D = problem(),
     H = D#data.hash,
     Diff = D#data.diff,
@@ -87,18 +92,19 @@ receive_work(<<Nonce:184>>, Pubkey, IP) ->
 	    accounts:give_share(Pubkey),
 	    if 
 		I > Diff -> 
-		    io:fwrite("found block 000\n"),
+		    %io:fwrite("found block 000\n"),
 		    found_block(<<Nonce:184>>),
-		    io:fwrite("found block\n"),
-		    io:fwrite(packer:pack({recent_work, H, Diff, Nonce})),
+                    io:fwrite("found block\n"),
+		    io:fwrite(packer:pack({recent_work, H, Diff, Nonce, Pubkey})),
 		    io:fwrite("\n"),
-		    "found block";
+                    accounts:save(),
+		    {ok, "found block"};
 		true -> 
-		    "found work"
+		    {ok, "found work"}
 	    end;
 	true ->
 	    bad_work:received(IP),
-	    "invalid work"
+	    {ok, "invalid work"}
     end.
 found_block(<<Nonce:184>>) ->
     %BinNonce = base64:encode(<<Nonce:184>>),
