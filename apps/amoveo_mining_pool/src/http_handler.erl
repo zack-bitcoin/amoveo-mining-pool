@@ -18,6 +18,13 @@ handle(Req, State) ->
 		packer:pack({ok, 0});
 	    ok ->
 		Data1 = jiffy:decode(Data0),
+                case Data1 of
+                    [<<"mining_data">>] ->
+                        io:fwrite("requested mining data 1\n");
+                    [<<"mining_data">>, _] ->
+                        io:fwrite("requested mining data 2\n");
+                    _ -> ok
+                end,
 		Data2 = case Data1 of
 			    [<<"mining_data">>, PubkeyWithWorkerID] ->
 						%{Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
