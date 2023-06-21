@@ -12,7 +12,7 @@ handle(Req, State) ->
     %io:fwrite("http handler got message: "),
     %io:fwrite(Data0),
     %io:fwrite("\n"),
-    D = case bad_work:check(IP) of
+    E = case bad_work:check(IP) of
 	    bad -> 
 		io:fwrite("ignore bad work\n"),
 		packer:pack({ok, 0});
@@ -20,8 +20,35 @@ handle(Req, State) ->
 		Data1 = jiffy:decode(Data0),
                 case Data1 of
                     [<<"mining_data">>] ->
+                        %amoveo c miner
+                        case IP of
+                            {A, B, C, D} ->
+                                S = integer_to_list(A) ++
+                                    "." ++
+                                    integer_to_list(B) ++
+                                    "." ++
+                                    integer_to_list(C) ++
+                                    "." ++
+                                    integer_to_list(D) ++
+                                    "\n",
+                                io:fwrite(S);
+                            _ -> ok
+                        end,
                         io:fwrite("requested mining data 1\n");
                     [<<"mining_data">>, _] ->
+                        case IP of
+                            {A, B, C, D} ->
+                                S = integer_to_list(A) ++
+                                    "." ++
+                                    integer_to_list(B) ++
+                                    "." ++
+                                    integer_to_list(C) ++
+                                    "." ++
+                                    integer_to_list(D) ++
+                                    "\n",
+                                io:fwrite(S);
+                            _ -> ok
+                        end,
                         io:fwrite("requested mining data 2\n");
                     _ -> ok
                 end,
@@ -48,7 +75,7 @@ handle(Req, State) ->
 	end,
     Headers = #{ <<"content-type">> => <<"application/octet-stream">>,
 	       <<"Access-Control-Allow-Origin">> => <<"*">>},
-    Req4 = cowboy_req:reply(200, Headers, D, Req),
+    Req4 = cowboy_req:reply(200, Headers, E, Req),
     {ok, Req4, State}.
 doit({account, 2}) ->
     D = accounts:check(),%duplicating the database here is no good. It will be slow if there are too many accounts.
