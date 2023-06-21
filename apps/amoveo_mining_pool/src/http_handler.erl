@@ -18,40 +18,6 @@ handle(Req, State) ->
 		packer:pack({ok, 0});
 	    ok ->
 		Data1 = jiffy:decode(Data0),
-                case Data1 of
-                    [<<"mining_data">>] ->
-                        %amoveo c miner
-                        case IP of
-                            {A, B, C, D} ->
-                                S = integer_to_list(A) ++
-                                    "." ++
-                                    integer_to_list(B) ++
-                                    "." ++
-                                    integer_to_list(C) ++
-                                    "." ++
-                                    integer_to_list(D) ++
-                                    "\n",
-                                io:fwrite(S);
-                            _ -> ok
-                        end,
-                        io:fwrite("requested mining data 1\n");
-                    [<<"mining_data">>, _] ->
-                        case IP of
-                            {A, B, C, D} ->
-                                S = integer_to_list(A) ++
-                                    "." ++
-                                    integer_to_list(B) ++
-                                    "." ++
-                                    integer_to_list(C) ++
-                                    "." ++
-                                    integer_to_list(D) ++
-                                    "\n",
-                                io:fwrite(S);
-                            _ -> ok
-                        end,
-                        io:fwrite("requested mining data 2\n");
-                    _ -> ok
-                end,
 		Data2 = case Data1 of
 			    [<<"mining_data">>, PubkeyWithWorkerID] ->
 						%{Pubkey, WorkerID} = pub_split(PubkeyWithWorkerID),
