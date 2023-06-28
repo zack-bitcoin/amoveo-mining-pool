@@ -28,7 +28,7 @@ talk_helper(Data, Peer, N) ->
 		    timer:sleep(500),
 		    talk_helper(Data, Peer, N - 1);
                 X -> 
-		    io:fwrite(packer:pack(X)),
+		    io:fwrite(packer:pack({Peer, X})),
 		    io:fwrite("\nYou need to turn on and sync your Amoveo node before you can mine. You can get it here: https://github.com/zack-bitcoin/amoveo \n"),
 		    timer:sleep(1000),
 		    talk_helper(Data, Peer, N - 1)

@@ -14,10 +14,10 @@ server_port.value = document.URL.split(":")[2].substring(0, 4);
 server_port.setAttribute("type", "text");
 var server_port_info = document.createElement("h8");
 server_port_info.innerHTML = "port: ";
-document.body.appendChild(server_ip_info);
-document.body.appendChild(server_ip);
-document.body.appendChild(server_port_info);
-document.body.appendChild(server_port);
+//document.body.appendChild(server_ip_info);
+//document.body.appendChild(server_ip);
+//document.body.appendChild(server_port_info);
+//document.body.appendChild(server_port);
 
 document.body.appendChild(document.createElement("br"));
 var miner_location = document.createElement("h8");

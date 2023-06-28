@@ -95,8 +95,8 @@ receive_work(Nonce0, Pubkey, IP) ->
 		    %io:fwrite("found block 000\n"),
 		    found_block(<<Nonce:184>>),
                     io:fwrite("found block\n"),
-		    io:fwrite(packer:pack({recent_work, H, Diff, Nonce, Pubkey})),
-		    io:fwrite("\n"),
+		    %io:fwrite(packer:pack({recent_work, H, Diff, Nonce, Pubkey})),
+		    %io:fwrite("\n"),
                     accounts:save(),
 		    {ok, "found block"};
 		true -> 

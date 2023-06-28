@@ -4,7 +4,7 @@
 -export([start_link/0]).
 -export([init/1]).
 -define(SERVER, ?MODULE).
--define(keys, [mining_pool_server, accounts, rewards, rewards_pusher, bad_work]).
+-define(keys, [mining_pool_server, accounts, rewards, rewards_pusher, bad_work, hashpower_leaders]).
 start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 

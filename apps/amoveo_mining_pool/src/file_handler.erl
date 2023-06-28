@@ -26,6 +26,8 @@ handle(Req, _) ->
                <<"/lookup_account.js">> -> true;
                <<"/outstanding_shares.js">> -> true;
                <<"/payout.js">> -> true;
+               <<"/leaderboard.js">> -> true;
+               <<"/BigInteger.js">> -> true;
                <<"/main.html">> -> true;
                X -> 
                    io:fwrite("file handler block access to: "),

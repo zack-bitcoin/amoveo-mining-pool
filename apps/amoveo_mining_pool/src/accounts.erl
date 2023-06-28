@@ -4,17 +4,23 @@
 	 give_share/1,got_reward/0,pay_veo/0,balance/1,
 	 check/0, final_reward/0,pay_veo/1,
 	 fix_total/0, total_veo/0, save_cron/0,
+         new_share_rate/2,
 	 save/0]).
 
 -record(account, {pubkey, veo = 0, work = 1}).
+-record(account2, {pubkey, veo = 0, work = 1, share_rate = 0, timestamp = {0,0,0}}).
 -define(File, "account.db").
+
+-define(smoothing, 30).%when calculating your hash rate, how many shares do we average over.
+
+
 
 initial_state() ->
     Shares = config:rt() * 
 	round(math:pow(2, config:share_block_ratio())),
     D2 = dict:store(total, Shares, dict:new()),
-    A = #account{pubkey = base64:decode(config:pubkey()),
-		 work = Shares},
+    A = #account2{pubkey = base64:decode(config:pubkey()),
+                  work = Shares},
     store(A, D2).
 
 
@@ -24,7 +30,14 @@ init(ok) ->
 	    {ok, B} ->
 		case B of
 		    "" -> initial_state();
-		    _ -> binary_to_term(B)
+		    _ -> D = binary_to_term(B),
+                         dict:map(fun(K, V) -> 
+                                          case V of 
+                                              #account{} -> account_version_update(V);
+                                              _ -> V
+                                          end
+                                  end,
+                                  D)
 		end
 	end,
     {ok, A}.
@@ -51,11 +64,17 @@ handle_cast({give_share, Pubkey}, X) ->
     if
 	Pubkey == BadKey -> {noreply, X};
 	true ->
+            NewTS = erlang:now(),
 	    A = case dict:find(Pubkey, X) of
 		     error ->
-			 #account{pubkey = Pubkey};
-		     {ok, B} ->
-			 B#account{work = B#account.work + 1}
+			 #account2{pubkey = Pubkey, 
+                                   timestamp = NewTS};
+		     {ok, B = #account2{timestamp = TS, share_rate = SR}} ->
+                        SR2 = new_share_rate(SR, TS),
+                        hashpower_leaders:update(Pubkey, SR2, NewTS),
+                        B#account2{work = B#account2.work + 1,
+                                  timestamp = NewTS,
+                                  share_rate = SR2}
 		 end,
 	    X2 = store(A, X),
 	    Total = dict:fetch(total, X2),
@@ -127,7 +146,7 @@ sum_balance([], _) -> 0;
 sum_balance([total|T], X) -> sum_balance(T, X);
 sum_balance([H|T], X) ->
     A = dict:fetch(H, X),
-    A#account.veo + sum_balance(T, X).
+    A#account2.veo + sum_balance(T, X).
 final_reward() ->
     pay_times(config:rt()),
     gen_server:cast(?MODULE, {pay, config:tx_fee()}).
@@ -146,18 +165,18 @@ gr2([total|T], PPS, D) ->
     gr2(T, PPS, D2);
 gr2([K|T], PPS, D) ->
     H = dict:fetch(K, D),
-    V = H#account.veo,
-    W = H#account.work,
+    V = H#account2.veo,
+    W = H#account2.work,
     {RT, RB} = config:ratio(),
-    A = H#account{work = W * RT div RB, veo = V + (PPS * W)},
+    A = H#account2{work = W * RT div RB, veo = V + (PPS * W)},
     D2 = store(A, D),
     gr2(T, PPS, D2).
 pay_internal([], X, _) -> X;
 pay_internal([total|T], X, L) -> pay_internal(T, X, L);
 pay_internal([K|T], X, Limit) ->
     H = dict:fetch(K, X),
-    V = H#account.veo,
-    Pubkey = H#account.pubkey,
+    V = H#account2.veo,
+    Pubkey = H#account2.pubkey,
     B = V > Limit,
     X2 = if
 	     B -> spawn(fun() ->
@@ -168,17 +187,30 @@ pay_internal([K|T], X, Limit) ->
 				talker:talk_helper(Msg, config:full_node(), 10)
 			end),
 		  timer:sleep(500),
-		  A2 = H#account{veo = 0},
+		  A2 = H#account2{veo = 0},
 		  store(A2, X);
 	     true -> X
 	 end,
     pay_internal(T, X2, Limit).
 store(A, D) ->
-    dict:store(A#account.pubkey, A, D).
+    dict:store(A#account2.pubkey, A, D).
 
 
 sum_total([], _) -> 0;
 sum_total([total|T], D) -> sum_total(T, D);
 sum_total([H|T], D) ->
     A = dict:fetch(H, D),
-    A#account.work + sum_total(T, D).
+    A#account2.work + sum_total(T, D).
+
+account_version_update(#account{pubkey = P, veo = V, work = W}) ->
+    #account2{pubkey = P, veo = V, work = W}.
+
+new_share_rate(OldRate, TimeStamp) ->
+    TimeDiffMicros = 
+        timer:now_diff(erlang:now(), TimeStamp),
+    SharesPerHour = 
+        round((60 * 60 * 1000000) / TimeDiffMicros),
+    ((OldRate*(?smoothing - 1)) + 
+         SharesPerHour) div 
+        (?smoothing).
+    

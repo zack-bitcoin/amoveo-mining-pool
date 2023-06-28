@@ -43,6 +43,7 @@ handle(Req, State) ->
 	       <<"Access-Control-Allow-Origin">> => <<"*">>},
     Req4 = cowboy_req:reply(200, Headers, E, Req),
     {ok, Req4, State}.
+
 doit({account, 2}) ->
     D = accounts:check(),%duplicating the database here is no good. It will be slow if there are too many accounts.
     {ok, dict:fetch(total, D)};
@@ -68,7 +69,9 @@ doit({mining_data, _}) ->
 	mining_pool_server:problem_api_mimic(),
     {ok, [Hash, Diff, Diff]};
 doit({mining_data}) -> 
-    mining_pool_server:problem_api_mimic().
+    mining_pool_server:problem_api_mimic();
+doit({accounts}) -> 
+    {ok, hashpower_leaders:read()}.
 %doit({work, Nonce, Pubkey}) ->
     %io:fwrite("attempted work \n"),
 %    mining_pool_server:receive_work(Nonce, Pubkey, IP).

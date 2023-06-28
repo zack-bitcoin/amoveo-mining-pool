@@ -5,6 +5,10 @@ function getter(t, u, callback){
     xmlhttp.send(JSON.stringify(t));
     return xmlhttp
 }
+function port_get(t, port, callback) {
+    u = url(port, get_ip());
+    return getter(t, u, callback);
+}
 function get(t, callback) {
     u = url(get_port(), get_ip());
     return getter(t, u, callback);
@@ -43,6 +47,10 @@ my_status = "nil";
 //    var x = local_get(cmd);
 //    var_get(x, callback);
 //}
+function variable_public_get_port(cmd, port, callback) {
+    var foobar = port_get(cmd, port);
+    var_get(foobar, callback, cmd);
+}
 function variable_public_get(cmd, callback) {
     var foobar = get(cmd);
     var_get(foobar, callback, cmd);
