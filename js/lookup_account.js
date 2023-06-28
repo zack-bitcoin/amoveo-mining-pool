@@ -63,9 +63,11 @@ function lookup_account1() {
 
                 var hashes_per_share = hashes_per_block.toJSNumber() / 1024;
                 var hashes_per_hour = shares_per_hour * hashes_per_share;
+                var hashes_per_second = hashes_per_hour / 3600;
+                var gigahashes_per_second = hashes_per_second / 10000000000;
 
 
-                lookup_account.innerHTML = "veo: ".concat(veo / 100000000).concat(" shares: ").concat(shares).concat(" shares per hour: ").concat(shares_per_hour).concat(" hashes per hour: ").concat(Math.round(hashes_per_hour));
+                lookup_account.innerHTML = "veo: ".concat(veo / 100000000).concat(" shares: ").concat(shares).concat(" shares per hour: ").concat(shares_per_hour).concat(" gigahashes per second: ").concat(Math.round(gigahashes_per_second));
             });
         });
     }
