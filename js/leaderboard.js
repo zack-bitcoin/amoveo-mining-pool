@@ -22,12 +22,12 @@
             var p = document.createElement("p");
             hashes_per_block(
                 function(hpb){
-                    var shares_per_hour = share_rate / 360;
+                    var shares_per_hour = share_rate;
                     var hashes_per_share = hpb.toJSNumber() / 1024;
                     var hashes_per_hour = shares_per_hour * hashes_per_share;
                     var hashes_per_second = hashes_per_hour / 3600;
                     var gigahashes_per_second = hashes_per_second / 10000000000;
-                    p.innerHTML = "pub: " + pub + " gigahashes_per_second: " + share_rate.toString();
+                    p.innerHTML = "pub: " + pub + " gigahashes_per_second: " + gigahashes_per_second.toString();
                     leaders.appendChild(p);
                     return(display_leaders(l.slice(1)));
                 });
