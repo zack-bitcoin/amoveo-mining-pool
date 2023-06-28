@@ -22,7 +22,7 @@
             var p = document.createElement("p");
             hashes_per_block(
                 function(hpb){
-                    var shares_per_hour = share_rate;
+                    var shares_per_hour = share_rate / 360;
                     var hashes_per_share = hpb.toJSNumber() / 1024;
                     var hashes_per_hour = shares_per_hour * hashes_per_share;
                     var hashes_per_second = hashes_per_hour / 3600;
