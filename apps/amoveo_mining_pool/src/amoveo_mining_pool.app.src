@@ -11,7 +11,8 @@
     jiffy,
     cowboy,
     encrypter,
-    pink_hash
+    pink_hash,
+    compile
    ]},
   {env,[]},
   {modules, []},
