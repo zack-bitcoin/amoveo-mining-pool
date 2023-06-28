@@ -20,9 +20,17 @@
             var share_rate = l[0][1];
             var l2 = l.slice(1);
             var p = document.createElement("p");
-            p.innerHTML = "pub: " + pub + " shares/hour: " + share_rate.toString();
-            leaders.appendChild(p);
-            return(display_leaders(l.slice(1)));
+            hashes_per_block(
+                function(hpb){
+                    var shares_per_hour = share_rate;
+                    var hashes_per_share = hpb.toJSNumber() / 1024;
+                    var hashes_per_hour = shares_per_hour * hashes_per_share;
+                    var hashes_per_second = hashes_per_hour / 3600;
+                    var gigahashes_per_second = hashes_per_second / 10000000000;
+                    p.innerHTML = "pub: " + pub + " gigahashes_per_second: " + share_rate.toString();
+                    leaders.appendChild(p);
+                    return(display_leaders(l.slice(1)));
+                });
         };
     };
     function understand_leaders(l) {

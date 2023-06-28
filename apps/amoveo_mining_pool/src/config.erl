@@ -1,8 +1,8 @@
 -module(config).
 -compile(export_all).
 
-mode() -> production.
-%mode() -> test.
+%mode() -> production.
+mode() -> test.
 full_node() -> 
     case mode() of
 	test ->

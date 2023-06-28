@@ -1,4 +1,4 @@
 function mode(){
-    //return("test");
-    return("production");
+    return("test");
+    //return("production");
 };
