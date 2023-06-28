@@ -27,7 +27,7 @@
                     var hashes_per_hour = shares_per_hour * hashes_per_share;
                     var hashes_per_second = hashes_per_hour / 3600;
                     var gigahashes_per_second = hashes_per_second / 10000000000;
-                    p.innerHTML = "pub: " + pub + " gigahashes_per_second: " + gigahashes_per_second.toString();
+                    p.innerHTML = "pub: " + pub + " gigahashes_per_second: " + round(gigahashes_per_second).toString();
                     leaders.appendChild(p);
                     return(display_leaders(l.slice(1)));
                 });
