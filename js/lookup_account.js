@@ -46,30 +46,52 @@ function lookup_account1() {
 	var veo = x[2];
 	var shares = x[3];
         var shares_per_hour = x[4];
+        hashes_per_block(
+            function(hpb){
+                var hashes_per_share = hpb.toJSNumber() / 1024;
+                var hashes_per_hour = shares_per_hour * hashes_per_share;
+                var hashes_per_second = hashes_per_hour / 3600;
+                var gigahashes_per_second = hashes_per_second / 10000000000;
+                console.log(hpb);
+                console.log(gigahashes_per_second);
+                lookup_account.innerHTML = "veo: ".concat(veo / 100000000).concat(" shares: ").concat(shares).concat(" shares per hour: ").concat(shares_per_hour).concat(" gigahashes per second: ").concat(Math.round(gigahashes_per_second));
+            });
+    }
+
+    /*
         variable_public_get_port(["height"], 8080, function(height) {
             variable_public_get_port(["header", height], 8080, function(header){
                 var difficulty = header[6];
-	        //var DT = header[5] - prev_header[5];
                 var hashes_per_block = sci2int(difficulty);
-                console.log(hashes_per_block.toJSNumber());
-                console.log(sci2int(10));
-//                var hashes_per_block = bigInt.max(
-//                    bigInt(1),
-//                    bigInt(1024).times(sci2int(difficulty)));
-//                console.log(sci2int(difficulty).toJSNumber());
-
-                //blocks_per_hour = shares_per_hour/1024;
-                //hashes_per_hour = blocks_per_hour * hashes_per_block;
-
                 var hashes_per_share = hashes_per_block.toJSNumber() / 1024;
                 var hashes_per_hour = shares_per_hour * hashes_per_share;
                 var hashes_per_second = hashes_per_hour / 3600;
                 var gigahashes_per_second = hashes_per_second / 10000000000;
 
-
                 lookup_account.innerHTML = "veo: ".concat(veo / 100000000).concat(" shares: ").concat(shares).concat(" shares per hour: ").concat(shares_per_hour).concat(" gigahashes per second: ").concat(Math.round(gigahashes_per_second));
             });
         });
     }
-
+    */
+    var memoized_hashes_per_block = 0;
+    function hashes_per_block(callback) {
+        console.log("hashes per block0");
+        var port = 8080;
+        if (mode() === "test"){
+            port = 3010;
+        };
+        if (memoized_hashes_per_block === 0){
+            variable_public_get_port(["height"], port, function(height) {
+                variable_public_get_port(["header", height], port, function(header){
+                    console.log("hashes per block1");
+                    var difficulty = header[6];
+                    var hashes_per_block = sci2int(difficulty);
+                    memoized_hashes_per_block = hashes_per_block;
+                    return(callback(memoized_hashes_per_block));
+                });
+            });
+        } else {
+            return(callback(memoized_hashes_per_block));
+        };
+    };
 }

@@ -11,7 +11,7 @@
 -record(account2, {pubkey, veo = 0, work = 1, share_rate = 0, timestamp = {0,0,0}}).
 -define(File, "account.db").
 
--define(smoothing, 30).%when calculating your hash rate, how many shares do we average over.
+-define(smoothing, 200).%when calculating your hash rate, how many shares do we average over.
 
 
 
