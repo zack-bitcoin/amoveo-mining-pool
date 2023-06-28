@@ -12,7 +12,7 @@
     cowboy,
     encrypter,
     pink_hash,
-    compile
+    compiler
    ]},
   {env,[]},
   {modules, []},
