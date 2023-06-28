@@ -46,8 +46,8 @@ function lookup_account1() {
 	var veo = x[2];
 	var shares = x[3];
         var shares_per_hour = x[4];
-        variable_public_get_port(["height"], 3010, function(height) {
-            variable_public_get_port(["header", height], 3010, function(header){
+        variable_public_get_port(["height"], 8080, function(height) {
+            variable_public_get_port(["header", height], 8080, function(header){
                 var difficulty = header[6];
 	        //var DT = header[5] - prev_header[5];
                 var hashes_per_block = sci2int(difficulty);
