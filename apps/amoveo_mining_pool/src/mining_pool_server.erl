@@ -103,6 +103,7 @@ receive_work(Nonce0, Pubkey, IP) ->
 		    {ok, "found work"}
 	    end;
 	true ->
+            io:fwrite("bad work received\n"),
 	    bad_work:received(IP),
 	    {ok, "invalid work"}
     end.
