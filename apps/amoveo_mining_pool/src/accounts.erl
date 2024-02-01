@@ -180,8 +180,9 @@ pay_internal([K|T], X, Limit) ->
     B = V > Limit,
     X2 = if
 	     B -> spawn(fun() ->
+                                {ok, Height} = packer:unpack(talker:talk_helper({height, 1}, config:full_node(), 3)),
 				A = V - config:tx_fee(),
-				S = binary_to_list(base64:encode(Pubkey)) ++ " " ++ integer_to_list(A) ++ "\n",
+				S = binary_to_list(base64:encode(Pubkey)) ++ " amount: " ++ integer_to_list(A) ++ " height: " ++ integer_to_list(Height) ++ "\n",
 				file:write_file(config:spend_log_file(), S, [append]),
 				Msg = {spend, Pubkey, A},
 				talker:talk_helper(Msg, config:full_node(), 10)
