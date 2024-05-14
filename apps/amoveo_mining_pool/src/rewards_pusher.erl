@@ -23,12 +23,16 @@ new_height_internal() ->
     if 
 	(Many > 0) and (H2 > 0) ->
 	    {ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
-	    {ok, Blocks} = packer:unpack(talker:talk_helper({blocks, Many, H2 - Many}, config:external(), 3)),%this line fails.
+	    %{ok, Blocks} = packer:unpack(talker:talk_helper({blocks, Many, H2 - Many}, config:external(), 3)),%this line fails.
+	    {ok, Blocks} = packer:unpack(talker:talk_helper({read_internal, H2, H}, config:full_node(), 3)),%this line fails.
             %io:fwrite({Many, H2, H}),
 	    pay_rewards(Blocks, ServerPub),
 	    rewards:update(H2);
 	true -> ok
     end.
+pay_rewards(B, _ServerPub) when is_binary(B) -> 
+    io:fwrite("rewards pusher got a binary instead of a list of blocks."),
+    ok;
 pay_rewards([], _ServerPub) -> 
     accounts:pay_veo();
 pay_rewards([H|T], ServerPub) ->
