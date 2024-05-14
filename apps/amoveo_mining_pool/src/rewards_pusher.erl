@@ -24,7 +24,7 @@ new_height_internal() ->
 	(Many > 0) and (H2 > 0) ->
 	    {ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
 	    %{ok, Blocks} = packer:unpack(talker:talk_helper({blocks, Many, H2 - Many}, config:external(), 3)),%this line fails.
-	    {ok, Blocks} = packer:unpack(talker:talk_helper({read_internal, H2, H}, config:full_node(), 3)),%this line fails.
+	    {ok, Blocks} = packer:unpack(talker:talk_helper({blocks, 4, H2, H}, config:full_node(), 3)),%this line fails.
             %io:fwrite({Many, H2, H}),
 	    pay_rewards(Blocks, ServerPub),
 	    rewards:update(H2);
