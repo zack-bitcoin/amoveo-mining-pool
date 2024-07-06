@@ -88,7 +88,7 @@ handle_cast({give_share, Pubkey}, X) ->
 		 end,
 	    X2 = store(A, X),
 	    Total = dict:fetch(total, X2),
-	    X3 = dict:store(total, Total+1, X2),
+	    X3 = dict:store(total, Total+100, X2),
 	    %save_internal(X3),
 	    {noreply, X3}
     end;
