@@ -55,7 +55,7 @@ add_new_to_rank(Pub, ShareRate, Now, []) ->
     NA = #acc{pub = Pub, share_rate = ShareRate, timestamp = Now},
     [NA];
 add_new_to_rank(Pub, ShareRate, Now, [A=#acc{share_rate = SR}|R]) 
-  when ShareRate > SR ->
+  when ShareRate >= SR ->
     [A|add_new_to_rank(Pub, ShareRate, Now, R)];
 add_new_to_rank(Pub, ShareRate, Now, [A|R]) ->
     NA = #acc{pub = Pub, share_rate = ShareRate, timestamp = Now},
