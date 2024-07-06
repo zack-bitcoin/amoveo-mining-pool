@@ -29,10 +29,10 @@ handle_cast({update, Pub, ShareRate, TimeStampNow}, X) ->
     {noreply, X2};
 handle_cast(clean, X) -> 
     #db{rank = R0} = X,
-    %remove anyone who hasn't found shares in the last 10 minutes.
+    %remove anyone who hasn't found shares in the last 1000 minutes.
     R = lists:filter(fun(#acc{timestamp = TS}) ->
                              abs(timer:now_diff(erlang:now(), TS)) < 
-                                 (1000000 * 60 * 10)
+                                 (1000000 * 60 * 1000)
                      end, R0),
     %remove anyone who isn't in the top ?size.
     L = length(R),
