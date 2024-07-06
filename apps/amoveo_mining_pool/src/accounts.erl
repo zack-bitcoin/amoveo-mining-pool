@@ -82,13 +82,13 @@ handle_cast({give_share, Pubkey}, X) ->
 		     {ok, B = #account2{timestamp = TS, share_rate = SR}} ->
                         SR2 = new_share_rate(SR, TS),
                         hashpower_leaders:update(Pubkey, SR2, NewTS),
-                        B#account2{work = B#account2.work + 100,
+                        B#account2{work = B#account2.work + config:shares_per_work(),
                                   timestamp = NewTS,
                                   share_rate = SR2}
 		 end,
 	    X2 = store(A, X),
 	    Total = dict:fetch(total, X2),
-	    X3 = dict:store(total, Total+100, X2),
+	    X3 = dict:store(total, Total+config:shares_per_work(), X2),
 	    %save_internal(X3),
 	    {noreply, X3}
     end;

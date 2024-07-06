@@ -3,6 +3,10 @@
 
 mode() -> production.
 %mode() -> test.
+
+
+shares_per_work() ->
+    2048.
 full_node() -> 
     case mode() of
 	test ->
