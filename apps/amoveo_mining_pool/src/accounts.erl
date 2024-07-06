@@ -22,7 +22,7 @@ initial_state() ->
             D2 = dict:store(total, 1, dict:new()),
             A = #account2{pubkey = base64:decode(config:pubkey()),
                           work = 1},
-            store(A, D2)
+            store(A, D2);
         _ ->
             Shares = config:rt() * 
                 round(math:pow(2, SBR)),
