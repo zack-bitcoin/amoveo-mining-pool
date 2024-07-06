@@ -22,7 +22,7 @@ pubkey() -> "BCjdlkTKyFh7BBx4grLUGFJCedmzo4e0XT1KJtbSwq5vCJHrPltHATB+maZ+Pncjnfv
 share_block_ratio() -> 
     case mode() of
 	test -> 2;
-	production -> 11
+	production -> 1
     end.
 %share_block_ratio() -> 11.% for every block, we pay out 2^share_block_ratio many rewards.
 %so if this is 4, that means we pay 16 shares for every block we find on average. if it is 10, then we pay 1024 shares for every block we find.
