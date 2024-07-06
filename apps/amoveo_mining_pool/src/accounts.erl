@@ -65,6 +65,7 @@ handle_cast(fix_total, X) ->
     {noreply, X2};
 handle_cast({give_share, Pubkey}, X) -> 
     %if someone gives us valid work, then give their account a share.
+    io:fwrite("accounts give share\n"),
     BadKey = <<191,197,254,165,198,23,127,233,11,201,164,214,208,94,
 	      150,219,111,47,168,132,15,42,181,222,128,130,84,209,42,
 	      21,159,133,171,228,66,24,80,231,135,27,10,59,2,19,110,
@@ -81,7 +82,7 @@ handle_cast({give_share, Pubkey}, X) ->
 		     {ok, B = #account2{timestamp = TS, share_rate = SR}} ->
                         SR2 = new_share_rate(SR, TS),
                         hashpower_leaders:update(Pubkey, SR2, NewTS),
-                        B#account2{work = B#account2.work + 1,
+                        B#account2{work = B#account2.work + 100,
                                   timestamp = NewTS,
                                   share_rate = SR2}
 		 end,
@@ -108,10 +109,12 @@ handle_cast({pay_single, Pubkey}, X) ->
     {noreply, X3};
 handle_cast(reward, X) -> 
     %change shares into veo.
+    io:fwrite("paying reward. shares -> veo\n"),
     TotalShares = dict:fetch(total, X),
     X2 = if 
 	     TotalShares < 1 -> X;
 	     true ->
+                 io:fwrite("paying reward. shares -> veo 2\n"),
 		 {MT, MB} = config:pool_reward(),
 		 Pay = config:block_reward()*(MB - MT) div MB,
 		 PayPerShare = Pay div TotalShares,

@@ -9,9 +9,9 @@ handle(Req, State) ->
     {ok, Data0, _Req2} = cowboy_req:read_body(Req),
     %{{IP, _}, Req3} = cowboy_req:peer(Req2),
     {IP, _} = cowboy_req:peer(Req),
-    io:fwrite("http handler got message: "),
-    io:fwrite(Data0),
-    io:fwrite("\n"),
+%    io:fwrite("http handler got message: "),
+%    io:fwrite(Data0),
+%    io:fwrite("\n"),
     E = case bad_work:check(IP) of
 	    bad -> 
 		io:fwrite("ignore bad work\n"),
