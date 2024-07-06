@@ -222,7 +222,8 @@ new_share_rate(OldRate, TimeStamp) ->
     TimeDiffMicros = 
         timer:now_diff(erlang:now(), TimeStamp),
     SharesPerHour = 
-        round((60 * 60 * 1000000) / TimeDiffMicros),
+        round((60 * 60 * 1000000 * config:shares_per_work()) 
+              / TimeDiffMicros),
     ((OldRate*(?smoothing - 1)) + 
          SharesPerHour) div 
         (?smoothing).
