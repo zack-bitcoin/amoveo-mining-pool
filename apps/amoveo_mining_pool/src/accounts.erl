@@ -16,12 +16,18 @@
 
 
 initial_state() ->
-    Shares = config:rt() * 
-	round(math:pow(2, config:share_block_ratio())),
-    D2 = dict:store(total, Shares, dict:new()),
-    A = #account2{pubkey = base64:decode(config:pubkey()),
-                  work = Shares},
-    store(A, D2).
+    SBR = config:share_block_ratio(),
+    case SBR of
+        1 ->
+            dict:store(total, 0, dict:new());
+        _ ->
+            Shares = config:rt() * 
+                round(math:pow(2, SBR)),
+            D2 = dict:store(total, Shares, dict:new()),
+            A = #account2{pubkey = base64:decode(config:pubkey()),
+                          work = Shares},
+            store(A, D2)
+    end.
 
 
 init(ok) -> 
