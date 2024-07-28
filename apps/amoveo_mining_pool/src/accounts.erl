@@ -180,6 +180,12 @@ gr2([K|T], PPS, D) ->
     V = H#account2.veo,
     W = H#account2.work,
     {RT, RB} = config:ratio(),
+    io:fwrite("paying veo: "),
+    io:fwrite(integer_to_list(PPS * W)),
+    io:fwrite("\n"),
+    io:fwrite("reducing work: "),
+    io:fwrite(integer_to_list(W * (RB - RT) div RB)),
+    io:fwrite("\n"),
     A = H#account2{work = W * RT div RB, veo = V + (PPS * W)},
     D2 = store(A, D),
     gr2(T, PPS, D2).
