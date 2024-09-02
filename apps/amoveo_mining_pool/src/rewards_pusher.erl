@@ -51,6 +51,6 @@ pay_rewards([H|T], ServerPub) ->
     
 pay_rewards2(A, B, _ServerPub) when A > B -> ok;
 pay_rewards2(Start, End, ServerPub) ->
-    Hash = talker:talk_helper({block_hash, Start}, config:full_node(), 3),
+    {ok, Hash} = talker:talk_helper({block_hash, Start}, config:full_node(), 3),
     reward_tracker:new_block(Hash),
     pay_rewards2(Start + 1, End, ServerPub).
