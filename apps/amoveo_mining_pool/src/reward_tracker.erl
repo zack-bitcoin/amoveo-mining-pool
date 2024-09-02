@@ -19,6 +19,7 @@ handle_cast({did_work, Pub, Hash}, X) ->
     X2 = dict:store(Hash, V2, X),
     {noreply, X};
 handle_cast({new_block, Hash}, X) -> 
+    io:fwrite("reward tracker, new block \n"),
     X2 = case dict:find(Hash, X) of
         error -> X;
         {ok, H = #h{rs = Rs}} -> 
@@ -48,6 +49,7 @@ add(Pub, Hash, H) ->
     end.
 
 pay(Pubkey) ->
+    io:fwrite("reward tracker, make payment\n"),
     BlockReward = 10382390,
     V = BlockReward * 5 div 6,
     {ok, Height} = packer:unpack(talker:talk_helper({height, 1}, config:full_node(), 3)),

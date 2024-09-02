@@ -1,0 +1,5 @@
+we created reward_tracker.erl, which makes many other modules obsolete.
+
+accounts, rewards, rewards_pusher, and hashpower_leaders are probably all obsolete.
+
+we need a new way to track how much work is done by each miner.

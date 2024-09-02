@@ -33,7 +33,7 @@ handle_call({check_solution, S}, _, Y) ->
     {reply, X, Y};
 handle_call(problem, _From, X) -> 
     {reply, X, X};
-handle_call(new_problem, _From, Y) -> 
+handle_call(new_problem, _From, _Y) -> 
     X = new_problem_internal(),
     {reply, X, X};
 handle_call(_, _From, X) -> {reply, X, X}.
