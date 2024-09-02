@@ -17,17 +17,17 @@ new_height() ->
     gen_server:cast(?MODULE, new_height).
 new_height_internal() -> 
     {ok, H} = packer:unpack(talker:talk_helper({height, 1}, config:full_node(), 3)),
-    H2 = H - config:confirmations(),
-    Old = rewards:check(),
-    Many = min(H2 - Old, 40),
+    Confs = config:confirmations(),
+    H2 = H - (2*Confs),
+    %Old = rewards:check(),
     if 
-	(Many > 0) and (H2 > 0) ->
+	(H2 > 0) ->
 	    {ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
-	    %{ok, Blocks} = packer:unpack(talker:talk_helper({blocks, Many, H2 - Many}, config:external(), 3)),%this line fails.
-	    {ok, Blocks} = packer:unpack(talker:talk_helper({blocks, 4, H2, H}, config:full_node(), 3)),%this line fails.
-            %io:fwrite({Many, H2, H}),
-	    pay_rewards(Blocks, ServerPub),
-	    rewards:update(H2);
+	    %{ok, Blocks} = packer:unpack(talker:talk_helper({blocks, 4, H2, H2 + Confs}}, config:full_node(), 3)),
+            %blocks is a list of blocks. H2 is the starting height, H is the ending height of the range.
+	    pay_rewards2(H2, H2+Confs, ServerPub);
+	    %pay_rewards(Blocks, ServerPub),
+	    %rewards:update(H2);
 	true -> ok
     end.
 pay_rewards(B, _ServerPub) when is_binary(B) -> 
@@ -49,3 +49,8 @@ pay_rewards([H|T], ServerPub) ->
     end,
     pay_rewards(T, ServerPub).
     
+pay_rewards2(A, B, _ServerPub) when A > B -> ok;
+pay_rewards2(Start, End, ServerPub) ->
+    Hash = talker:talk_helper({block_hash, Start}, config:full_node(), 3),
+    reward_tracker:new_block(Hash),
+    pay_rewards2(Start + 1, End, ServerPub).

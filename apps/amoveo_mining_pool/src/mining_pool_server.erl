@@ -88,8 +88,14 @@ receive_work(Nonce0, Pubkey, IP) ->
 	I > EasyDiff -> 
 	    true = check_solution(Nonce),
 	    found_solution(Nonce),
-	    %io:fwrite("found share\n"),
+	    io:fwrite("found share\n"),
+            io:fwrite("nonce: "),
+            io:fwrite(integer_to_list(Nonce)),
+            io:fwrite("\n"),
+            io:fwrite("pub: "),
+            io:fwrite(integer_to_list(Pubkey)),
 	    accounts:give_share(Pubkey),
+            reward_tracker:did_work(Pubkey, H),
 	    if 
 		I > Diff -> 
 		    %io:fwrite("found block 000\n"),
