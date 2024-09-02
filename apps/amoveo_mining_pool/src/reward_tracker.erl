@@ -32,14 +32,15 @@ terminate(_, X) ->
     ok.
 handle_info(_, X) -> {noreply, X}.
 handle_cast({did_work, Pub, Hash}, X) -> 
-    V2 = case dict:find(Hash, X) of
+    io:fwrite("reward tracker did work\n"),
+    V1 = case dict:find(Hash, X) of
              error -> #h{};
-             {ok, V = #h{}} -> add(Pub, Hash, V)
+             {ok, V = #h{}} -> V
          end,
+    V2 = add(Pub, Hash, V1),
     X2 = dict:store(Hash, V2, X),
     {noreply, X};
 handle_cast({new_block, Hash}, X) -> 
-    io:fwrite("reward tracker, new block \n"),
     X2 = case dict:find(Hash, X) of
         error -> X;
         {ok, H = #h{rs = Rs}} -> 
