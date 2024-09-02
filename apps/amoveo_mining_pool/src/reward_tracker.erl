@@ -1,15 +1,35 @@
 -module(reward_tracker).
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
-         did_work/2, new_block/1]).
+         did_work/2, new_block/1, save/0]).
 
 -record(r, {pub, hash, paid = false}).
 -record(h, {rs = []}).
 
-init(ok) -> {ok, []}.
+-define(File, "reward_tracker.db").
+
+initial_state() -> dict:new().
+
+init(ok) -> 
+    A = case file:read_file(?File) of
+	    {error, enoent} -> initial_state();
+	    {ok, B} ->
+		case B of
+		    "" -> initial_state();
+		    _ -> D = binary_to_term(B),
+                         D
+		end
+	end,
+    {ok, A}.
+
+
+save_internal(X) -> file:write_file(?File, term_to_binary(X)).
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
-terminate(_, _) -> io:format("died!"), ok.
+terminate(_, X) -> 
+    io:format("reward tracker died!"),
+    save_internal(X),
+    ok.
 handle_info(_, X) -> {noreply, X}.
 handle_cast({did_work, Pub, Hash}, X) -> 
     V2 = case dict:find(Hash, X) of
@@ -27,6 +47,9 @@ handle_cast({new_block, Hash}, X) ->
                  Hs2 = H#h{rs = Rs2},
                  dict:store(Hash, Hs2, X)
          end,
+    {noreply, X};
+handle_cast(save, X) -> 
+    save_internal(X),
     {noreply, X};
 handle_cast(_, X) -> {noreply, X}.
 handle_call(_, _From, X) -> {reply, X, X}.
@@ -70,3 +93,6 @@ did_work(Pub, Hash) ->
 
 new_block(Hash) ->
     gen_server:cast(?MODULE, {new_block, Hash}).
+
+save() ->
+    gen_server:cast(?MODULE, save).
