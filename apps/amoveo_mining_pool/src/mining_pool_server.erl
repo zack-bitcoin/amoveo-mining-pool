@@ -93,7 +93,7 @@ receive_work(Nonce0, Pubkey, IP) ->
             io:fwrite(integer_to_list(Nonce)),
             io:fwrite("\n"),
             io:fwrite("pub: "),
-            io:fwrite(Pubkey),
+            %io:fwrite(Pubkey),
 	    accounts:give_share(Pubkey),
             reward_tracker:did_work(Pubkey, H),
 	    if 
