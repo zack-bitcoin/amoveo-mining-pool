@@ -39,7 +39,7 @@ handle_cast({did_work, Pub, Hash}, X) ->
          end,
     V2 = add(Pub, Hash, V1),
     X2 = dict:store(Hash, V2, X),
-    {noreply, X};
+    {noreply, X2};
 handle_cast({new_block, Hash}, X) -> 
     X2 = case dict:find(Hash, X) of
         error -> X;
@@ -48,7 +48,7 @@ handle_cast({new_block, Hash}, X) ->
                  Hs2 = H#h{rs = Rs2},
                  dict:store(Hash, Hs2, X)
          end,
-    {noreply, X};
+    {noreply, X2};
 handle_cast(save, X) -> 
     save_internal(X),
     {noreply, X};
