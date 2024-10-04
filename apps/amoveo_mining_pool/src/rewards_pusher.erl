@@ -26,7 +26,7 @@ new_height_internal() ->
 	    %{ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
 	    %{ok, Blocks} = packer:unpack(talker:talk_helper({blocks, 4, H2, H2 + Confs}}, config:full_node(), 3)),
             %blocks is a list of blocks. H2 is the starting height, H is the ending height of the range.
-            io:fwrite("rewards_pusher, calling pay_rewards2\n"),
+            %io:fwrite("rewards_pusher, calling pay_rewards2\n"),
 	    pay_rewards2(H2, H2+Confs);
 	    %pay_rewards(Blocks, ServerPub),
 	    %rewards:update(H2);

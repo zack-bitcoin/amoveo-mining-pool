@@ -99,7 +99,7 @@ did_work(Pub, Hash) ->
     gen_server:cast(?MODULE, {did_work, Pub, Hash}).
 
 new_block(Hash) ->
-    io:fwrite("calling reward_tracker:new_block/1\n"),
+    %io:fwrite("calling reward_tracker:new_block/1\n"),
     gen_server:cast(?MODULE, {new_block, Hash}).
 
 save() ->
