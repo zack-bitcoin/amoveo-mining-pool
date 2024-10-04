@@ -58,11 +58,11 @@ pay_rewards2(A, B) ->
 pay_rewards2(A, B, _ServerPub) when A > B -> ok;
 pay_rewards2(Start, End, ServerPub) ->
     {ok, Hash} = packer:unpack(talker:talk_helper({block_hash, Start}, config:full_node(), 3)),
-    io:fwrite("rewards pusher: pay_rewards2 "),
-    io:fwrite(integer_to_list(Start)),
-    io:fwrite("\n"),
-    io:fwrite("hash is: "),
-    io:fwrite(base64:encode(Hash)),
-    io:fwrite("\n"),
+    %io:fwrite("rewards pusher: pay_rewards2 "),
+    %io:fwrite(integer_to_list(Start)),
+    %io:fwrite("\n"),
+    %io:fwrite("hash is: "),
+    %io:fwrite(base64:encode(Hash)),
+    %io:fwrite("\n"),
     reward_tracker:new_block(hash:doit(Hash)),
     pay_rewards2(Start + 1, End, ServerPub).

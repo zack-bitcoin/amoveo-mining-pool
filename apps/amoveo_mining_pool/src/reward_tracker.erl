@@ -44,10 +44,12 @@ handle_cast({did_work, Pub, Hash}, X) ->
 handle_cast({new_block, Hash}, X) -> 
     X2 = case dict:find(Hash, X) of
         error -> 
-                 io:fwrite("we did not find that block\n"),
+                 %io:fwrite("we did not find that block\n"),
                  X;
         {ok, H = #h{rs = Rs}} -> 
                  io:fwrite("block was mined by us\n"),
+                 io:fwrite(base64:encode(Hash)),
+                 io:fwrite("\n"),
                  Rs2 = pay_if_exists(Rs, Hash),
                  Hs2 = H#h{rs = Rs2},
                  dict:store(Hash, Hs2, X)
