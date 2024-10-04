@@ -42,7 +42,9 @@ handle_cast({did_work, Pub, Hash}, X) ->
     {noreply, X2};
 handle_cast({new_block, Hash}, X) -> 
     X2 = case dict:find(Hash, X) of
-        error -> X;
+        error -> 
+                 io:fwrite("we did not find that block\n"),
+                 X;
         {ok, H = #h{rs = Rs}} -> 
                  io:fwrite("block was mined by us\n"),
                  Rs2 = pay_if_exists(Rs, Hash),
