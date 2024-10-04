@@ -52,7 +52,7 @@ problem_api_mimic() ->
     %looks the same as amoveo api.
     %io:fwrite("give them a problem\n"),
     D = problem(),
-    Hash = D#data.hash,
+    Hash = D#data.hash,% = hash:doit(block:hash(block)) = hash:doit(hash:doit(headers:serialize(block_to_header(H))))
     Nonce = D#data.nonce,
     Diff = easy_diff(D#data.diff),
     {ok, [Hash, Nonce, Diff]}.

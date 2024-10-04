@@ -33,6 +33,7 @@ terminate(_, X) ->
 handle_info(_, X) -> {noreply, X}.
 handle_cast({did_work, Pub, Hash}, X) -> 
     io:fwrite("reward tracker did work\n"),
+    %this hash is sha256(block_hash) = sha256(sha256(serialized_header))
     V1 = case dict:find(Hash, X) of
              error -> #h{};
              {ok, V = #h{}} -> V
