@@ -44,6 +44,7 @@ handle_cast({new_block, Hash}, X) ->
     X2 = case dict:find(Hash, X) of
         error -> X;
         {ok, H = #h{rs = Rs}} -> 
+                 io:fwrite("block was mined by us\n"),
                  Rs2 = pay_if_exists(Rs, Hash),
                  Hs2 = H#h{rs = Rs2},
                  dict:store(Hash, Hs2, X)
