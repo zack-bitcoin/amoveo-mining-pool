@@ -58,7 +58,7 @@ pay_rewards2(Start, End, ServerPub) ->
     io:fwrite(integer_to_list(Start)),
     io:fwrite("\n"),
     io:fwrite("hash is: "),
-    io:fwrite(Hash),
+    io:fwrite(base64:encode(Hash)),
     io:fwrite("\n"),
     reward_tracker:new_block(Hash),
     pay_rewards2(Start + 1, End, ServerPub).
