@@ -17,6 +17,7 @@ new_height() ->
     gen_server:cast(?MODULE, new_height).
 new_height_internal() -> 
     {ok, H} = packer:unpack(talker:talk_helper({height, 1}, config:full_node(), 3)),
+
     Confs = config:confirmations(),
     H2 = H - (2*Confs),
     %Old = rewards:check(),
@@ -55,6 +56,9 @@ pay_rewards2(Start, End, ServerPub) ->
     {ok, Hash} = packer:unpack(talker:talk_helper({block_hash, Start}, config:full_node(), 3)),
     io:fwrite("rewards pusher: pay_rewards2 "),
     io:fwrite(integer_to_list(Start)),
+    io:fwrite("\n"),
+    io:fwrite("hash is: "),
+    io:fwrite(Hash),
     io:fwrite("\n"),
     reward_tracker:new_block(Hash),
     pay_rewards2(Start + 1, End, ServerPub).
