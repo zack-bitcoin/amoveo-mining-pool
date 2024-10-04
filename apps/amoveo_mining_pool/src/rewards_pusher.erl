@@ -58,6 +58,7 @@ pay_rewards2(A, B) ->
 pay_rewards2(A, B, _ServerPub) when A > B -> ok;
 pay_rewards2(Start, End, ServerPub) ->
     {ok, Hash} = packer:unpack(talker:talk_helper({block_hash, Start}, config:full_node(), 3)),
+    <<_:256>> = Hash,
     if
         ((Start rem 20) == 0) -> io:fwrite("pay rewards height: "),
                                  io:fwrite(integer_to_list(Start)),
