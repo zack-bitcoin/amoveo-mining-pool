@@ -33,7 +33,8 @@ terminate(_, X) ->
 handle_info(_, X) -> {noreply, X}.
 handle_cast({did_work, Pub, Hash}, X) -> 
     io:fwrite("reward tracker did work\n"),
-    %this hash is sha256(block_hash) = sha256(sha256(serialized_header))
+   %this hash is not sha256(block_hash) = sha256(sha256(serialized_header))
+    %it is data.hash, which is the third thing from from full node's {mining_data} = hash:doit(block:hash(Block))
     V1 = case dict:find(Hash, X) of
              error -> #h{};
              {ok, V = #h{}} -> V
@@ -44,7 +45,7 @@ handle_cast({did_work, Pub, Hash}, X) ->
 handle_cast({new_block, Hash}, X) -> 
     X2 = case dict:find(Hash, X) of
              error -> 
-                 %io:fwrite("we did not find that block\n"),
+                 %Io:fwrite("we did not find that block\n"),
                  X;
              {ok, H = #h{rs = Rs}} -> 
                  io:fwrite("block was mined by us\n"),
