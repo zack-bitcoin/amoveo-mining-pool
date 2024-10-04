@@ -1,7 +1,7 @@
 -module(rewards_pusher).
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2]).
--export([new_height/0]).
+-export([new_height/0, pay_rewards2/2]).
 
 init(ok) -> {ok, []}.
 start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, ok, []).
@@ -23,11 +23,11 @@ new_height_internal() ->
     %Old = rewards:check(),
     if 
 	(H2 > 0) ->
-	    {ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
+	    %{ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
 	    %{ok, Blocks} = packer:unpack(talker:talk_helper({blocks, 4, H2, H2 + Confs}}, config:full_node(), 3)),
             %blocks is a list of blocks. H2 is the starting height, H is the ending height of the range.
             io:fwrite("rewards_pusher, calling pay_rewards2\n"),
-	    pay_rewards2(H2, H2+Confs, ServerPub);
+	    pay_rewards2(H2, H2+Confs);
 	    %pay_rewards(Blocks, ServerPub),
 	    %rewards:update(H2);
 	true -> ok
@@ -50,6 +50,10 @@ pay_rewards([H|T], ServerPub) ->
             end
     end,
     pay_rewards(T, ServerPub).
+    
+pay_rewards2(A, B) ->
+    {ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
+    pay_rewards2(A, B, ServerPub).
     
 pay_rewards2(A, B, _ServerPub) when A > B -> ok;
 pay_rewards2(Start, End, ServerPub) ->
