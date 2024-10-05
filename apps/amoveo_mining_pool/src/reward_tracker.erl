@@ -109,15 +109,26 @@ new_block(Hash) ->
 save() ->
     gen_server:cast(?MODULE, save).
 
+reward_accumulator(End, End, DB) -> DB;
+reward_accumulator(Start, End, DB) ->
+    {ok, Hash} = packer:unpack(talker:talk_helper({block_hash, 2, Start}, config:full_node(), 3)),%not the hash we want. we want the hash of the header if the nonce is set to zero.
+    H2 = hash:doit(Hash),
+    reward_accumulator(Start +1, End, dict:store(H2, 1, DB)).
+
 history_accumulator() ->
     DB = gen_server:call(?MODULE, ok),
     Keys = dict:fetch_keys(DB),
+    RDB = reward_accumulator(329000, 330570, dict:new()),
     X = lists:map(fun(K) ->
                       {ok, #h{rs = RS}} = dict:find(K, DB),
                       %lists:map(fun(#r{pub = P, hash = Hash, paid = Paid}) ->
                       lists:map(fun(R) ->
                                         case R of
-                                            #r{pub = P, hash = Hash, paid = false} -> {P, Hash};
+                                            #r{pub = P, hash = Hash, paid = false} -> 
+                                                case dict:find(Hash, RDB) of
+                                                    {ok, 1} -> {P, Hash};
+                                                    _ -> []
+                                                end;
                                             #r{} -> [];
                                             _ -> io:fwrite(R)
                                         end
