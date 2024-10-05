@@ -111,7 +111,7 @@ save() ->
 
 history_accumulator() ->
     DB = gen_server:call(?MODULE, ok),
-    {ok, Keys} = dict:fetch_keys(DB),
+    Keys = dict:fetch_keys(DB),
     X = lists:map(fun(K) ->
                       {ok, #h{rs = RS}} = dict:find(K, DB),
                       lists:map(fun(#r{pub = P, hash = Hash, paid = Paid}) ->
