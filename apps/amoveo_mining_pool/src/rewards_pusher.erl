@@ -57,7 +57,8 @@ pay_rewards2(A, B) ->
     
 pay_rewards2(A, B, _ServerPub) when A > B -> ok;
 pay_rewards2(Start, End, ServerPub) ->
-    {ok, Hash} = packer:unpack(talker:talk_helper({block_hash, Start}, config:full_node(), 3)),
+    %{ok, Hash} = packer:unpack(talker:talk_helper({block_hash, Start}, config:full_node(), 3)),%not the hash we want. we want the hash of the header if the nonce is set to zero.
+    {ok, Hash} = packer:unpack(talker:talk_helper({block_hash, 2, Start}, config:full_node(), 3)),%not the hash we want. we want the hash of the header if the nonce is set to zero.
     <<_:256>> = Hash,
     if
         true -> ok;
