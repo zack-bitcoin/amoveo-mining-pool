@@ -116,10 +116,9 @@ history_accumulator() ->
                       {ok, #h{rs = RS}} = dict:find(K, DB),
                       %lists:map(fun(#r{pub = P, hash = Hash, paid = Paid}) ->
                       lists:map(fun(R) ->
-                                        io:fwrite(R),
-                                        if
-                                            %not(Paid) -> {P, Hash};
-                                            true -> []
+                                        case R of
+                                            #r{pub = P, hash = Hash, paid = false} -> {P, Hash};
+                                            _ -> io:fwrite(R)
                                         end
                                 end, RS)
                   end, Keys),
