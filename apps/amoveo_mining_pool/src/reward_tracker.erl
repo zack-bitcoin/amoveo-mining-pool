@@ -126,7 +126,7 @@ history_accumulator() ->
     history_accumulator2(X, dict:new()).
 history_accumulator2([], D) -> D;
 history_accumulator2([[]|T], D) -> 
-    history_accumulator2(T, D).
+    history_accumulator2(T, D);
 history_accumulator2([{Pub, Hash}|T], D) -> 
     Dict2 = case dict:find(Pub, D) of
                 error ->
