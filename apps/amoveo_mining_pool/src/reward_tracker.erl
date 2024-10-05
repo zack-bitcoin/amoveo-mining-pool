@@ -128,6 +128,8 @@ history_accumulator2([], D) -> D;
 history_accumulator2([[H|T1]|T2], D) -> 
     D2 = history_accumulator2([H|T1], D),
     history_accumulator2(T2, D2);
+history_accumulator2([[ok]|T], D) -> 
+    history_accumulator2(T, D);
 history_accumulator2([[]|T], D) -> 
     history_accumulator2(T, D);
 history_accumulator2([{Pub, Hash}|T], D) -> 
