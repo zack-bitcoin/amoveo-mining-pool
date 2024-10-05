@@ -61,9 +61,9 @@ pay_rewards2(Start, End, ServerPub) ->
     {ok, Hash} = packer:unpack(talker:talk_helper({block_hash, 2, Start}, config:full_node(), 3)),%not the hash we want. we want the hash of the header if the nonce is set to zero.
     <<_:256>> = Hash,
     if
-        true -> ok;
         ((Start rem 20) == 0) -> io:fwrite("pay rewards height: "),
                                  io:fwrite(integer_to_list(Start)),
+                                 io:fwrite(base64:encode(Hash)),
                                  io:fwrite("\n");
         true -> ok
     end,
@@ -73,5 +73,5 @@ pay_rewards2(Start, End, ServerPub) ->
     %io:fwrite("hash is: "),
     %io:fwrite(base64:encode(Hash)),
     %io:fwrite("\n"),
-    reward_tracker:new_block(Hash),
+    reward_tracker:new_block(hash:doit(Hash)),
     pay_rewards2(Start + 1, End, ServerPub).
