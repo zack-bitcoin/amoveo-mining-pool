@@ -118,12 +118,15 @@ history_accumulator() ->
                       lists:map(fun(R) ->
                                         case R of
                                             #r{pub = P, hash = Hash, paid = false} -> {P, Hash};
+                                            #r{} -> [];
                                             _ -> io:fwrite(R)
                                         end
                                 end, RS)
                   end, Keys),
     history_accumulator2(X, dict:new()).
 history_accumulator2([], D) -> D;
+history_accumulator2([[]|T], D) -> 
+    history_accumulator2(T, Dict2).
 history_accumulator2([{Pub, Hash}|T], D) -> 
     Dict2 = case dict:find(Pub, D) of
                 error ->
