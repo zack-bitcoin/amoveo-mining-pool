@@ -1,6 +1,7 @@
 -module(reward_tracker).
 -behaviour(gen_server).
 -export([start_link/0,code_change/3,handle_call/3,handle_cast/2,handle_info/2,init/1,terminate/2,
+         history_accumulator/0,
          did_work/2, new_block/1, save/0]).
 
 -record(r, {pub, hash, paid = false}).
@@ -107,3 +108,25 @@ new_block(Hash) ->
 
 save() ->
     gen_server:cast(?MODULE, save).
+
+history_accumulator() ->
+    DB = gen_server:call(?MODULE, ok),
+    {ok, Keys} = dict:fetch_keys(DB),
+    X = lists:map(fun(K) ->
+                      {ok, #h{rs = RS}} = dict:find(K, DB),
+                      lists:map(fun(#r{pub = P, hash = Hash, paid = Paid}) ->
+                                        if
+                                            not(Paid) -> {P, Hash};
+                                            true -> []
+                                        end
+                                end, RS)
+                  end, Keys),
+    history_accumulator2(X, dict:new()).
+history_accumulator2([], D) -> D;
+history_accumulator2([{Pub, Hash}|T], D) -> 
+    Dict2 = case dict:find(Pub, D) of
+                error ->
+                    dict:store(Pub, 1, D);
+                {ok, N} -> dict:store(Pub, N+1, D)
+            end,
+    history_accumulator2(T, Dict2).
