@@ -126,7 +126,7 @@ history_accumulator() ->
     DB2 = history_accumulator2(X, dict:new()),
     Accs = dict:fetch_keys(DB2),
     lists:map(fun(A) ->
-                      {A, dict:fetch(DB2, A)}
+                      {A, dict:fetch(A, DB2)}
               end, Accs).
 history_accumulator2([], D) -> D;
 history_accumulator2([[H|T1]|T2], D) -> 
