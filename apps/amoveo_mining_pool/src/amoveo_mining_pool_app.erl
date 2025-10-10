@@ -32,8 +32,8 @@ new_block_cron() ->
           end),
     new_block_cron().
 new_block_cron2() ->
-    %{ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
-    {ok, H} = (talker:talk_helper({height, 1}, config:full_node(), 3)),%block:height().
+    {ok, ServerPub} = packer:unpack(talker:talk_helper({pubkey}, config:full_node(), 3)),
+    %{ok, H} = (talker:talk_helper({height, 1}, config:full_node(), 3)),%block:height().
     MH = height:check(),
     height:update(H),
     {ok, [Problem, _Random, Difficulty]} = packer:unpack(talker:talk_helper({mining_data}, config:full_node(), 10000)),
