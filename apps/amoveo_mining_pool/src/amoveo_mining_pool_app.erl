@@ -74,8 +74,8 @@ new_block_cron2() ->
 paylist_condenser(L) ->
     D2 = lists:foldl(fun(Account, D) -> 
                              case dict:find(Account, D) of
-                                 error -> dict:store(?reward, Account, D);
-                                 {ok, V} -> dict:store(?reward+V, Account, D)
+                                 error -> dict:store(Account, ?reward, D);
+                                 {ok, V} -> dict:store(Account, ?reward+V, D)
                              end
                      end, dict:new(), L),
     Ks = dict:fetch_keys(D2),
