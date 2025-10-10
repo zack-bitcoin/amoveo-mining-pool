@@ -1,6 +1,7 @@
 -module(amoveo_mining_pool_app).
 -behaviour(application).
--export([start/2, stop/1]).
+-export([start/2, stop/1,
+        paylist_condenser/1]).
 
 -define(reward, 8551991).
 
@@ -58,7 +59,7 @@ new_block_cron2() ->
                     case to_pay:lookup() of
                         [] -> ok;
                         PayList ->
-                            PayList2 = packer:pack(paylist_condenser(PayList)),
+                            PayList2 = paylist_condenser(PayList),
                     %[{Amount, Pubkey}|T]
                             {ok, Tx} = talker:talk_helper({spend, PayList2}, config:full_node(), 3),
                             file:write_file(config:spend_log_file(), binary_to_list(packer:pack(Tx)) ++ "\n", [append]),
