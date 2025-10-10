@@ -60,6 +60,7 @@ pub_split(PubkeyWithWorkerID) ->
     {<<Pubkey:704>>, base64:encode(ID)}.
 
 receive_work(Nonce0, Pubkey, IP) ->
+    io:fwrite("received work \n"),
     Nonce = case Nonce0 of
                 <<X:184>> -> X;
                 <<X:256>> -> X
@@ -69,6 +70,9 @@ receive_work(Nonce0, Pubkey, IP) ->
     I = pow:hash2integer(hash:doit(Y), 1),
     if
         I > Diff ->
+            io:fwrite("work was valid. found block\n"),
+            Height = height:check(),
+            solutions:found_solution(Problem, Height, Pubkey),
             Data = {work, <<Nonce:184>>, 0},
             _X = talker:talk_helper(Data, config:full_node(), 10),
             ok;
