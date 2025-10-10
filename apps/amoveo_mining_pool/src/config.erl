@@ -1,8 +1,8 @@
 -module(config).
 -compile(export_all).
 
-%mode() -> production.
-mode() -> test.
+mode() -> production.
+%mode() -> test.
 
 refresh_period() -> 2.%how often we get a new problem from the server to work on. in seconds
 full_node() -> 
