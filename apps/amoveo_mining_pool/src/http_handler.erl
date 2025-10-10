@@ -72,7 +72,7 @@ receive_work(Nonce0, Pubkey, IP) ->
         I > Diff ->
             io:fwrite("work was valid. found block\n"),
             Height = height:check(),
-            solutions:found_solution(Problem, Height, Pubkey),
+            solutions:found_solution(Problem, Height+1, Pubkey),
             Data = {work, <<Nonce:184>>, 0},
             _X = talker:talk_helper(Data, config:full_node(), 10),
             ok;

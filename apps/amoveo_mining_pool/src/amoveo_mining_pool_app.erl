@@ -47,7 +47,7 @@ new_block_cron2() ->
             io:fwrite("new block was found\n"),
 
             {ok, BlockHash_5} = packer:unpack(talker:talk_helper({block_hash, 2, H-5}, config:full_node(), 3)),
-            case solutions:lookup(BlockHash_5) of
+            case solutions:lookup(hash:doit(BlockHash_5)) of
                 error -> ok; %we didnt' mine that block
                 {ok, Miner} ->
                     to_pay:add(Miner)
