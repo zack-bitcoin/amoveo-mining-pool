@@ -55,7 +55,7 @@ new_block_cron2() ->
             end,
             TPLL = length(to_pay:lookup()),
             if
-                ((TPLL > 0) or (0 == (H rem 10))) -> 
+                ((TPLL > 10) or (0 == (H rem 10))) -> 
                     io:fwrite("time to pay\n"),
                     case to_pay:lookup() of
                         [] -> ok;
