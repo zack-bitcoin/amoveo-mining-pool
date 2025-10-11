@@ -53,17 +53,18 @@ new_block_cron2() ->
                 {ok, Miner} ->
                     to_pay:add(Miner)
             end,
+            TPLL = length(to_pay:lookup()),
             if
-                (0 == (H rem 10)) -> 
+                ((TPLL > 10) or (0 == (H rem 10))) -> 
                     io:fwrite("time to pay\n"),
                     case to_pay:lookup() of
                         [] -> ok;
                         PayList ->
                             PayList2 = paylist_condenser(PayList),
                     %[{Amount, Pubkey}|T]
-                            {ok, Tx} = talker:talk_helper({spend, PayList2}, config:full_node(), 3),
-                            to_pay:erase(),
+                            {ok, Tx} = packer:unpack(talker:talk_helper({spend, PayList2}, config:full_node(), 3)),
                             file:write_file(config:spend_log_file(), binary_to_list(packer:pack(Tx)) ++ "\n", [append]),
+                            to_pay:erase(),
                             ok
                     end;
                 true -> ok
