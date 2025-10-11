@@ -49,6 +49,8 @@ doit({mining_data}) ->
     %mining_pool_server:problem_api_mimic();
 
 doit({status}) ->
+    ok;
+doit({[_|_]}) ->
     ok.
 
 
