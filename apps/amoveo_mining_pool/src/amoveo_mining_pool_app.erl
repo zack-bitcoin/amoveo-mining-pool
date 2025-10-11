@@ -62,6 +62,7 @@ new_block_cron2() ->
                             PayList2 = paylist_condenser(PayList),
                     %[{Amount, Pubkey}|T]
                             {ok, Tx} = talker:talk_helper({spend, PayList2}, config:full_node(), 3),
+                            to_pay:erase(),
                             file:write_file(config:spend_log_file(), binary_to_list(packer:pack(Tx)) ++ "\n", [append]),
                             ok
                     end;
