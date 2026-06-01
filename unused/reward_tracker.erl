@@ -111,7 +111,7 @@ save() ->
 
 reward_accumulator(End, End, DB) -> DB;
 reward_accumulator(Start, End, DB) ->
-    {ok, Hash} = packer:unpack(talker:talk_helper({block_hash, 2, Start}, config:full_node(), 3)),%not the hash we want. we want the hash of the header if the nonce is set to zero.
+    {ok, Hash} = packer:unpack(talker:talk_helper({block_hash, 2, Start}, config:full_node(), 3)),%hash of Start'th block, where the nonce is set to zero.
     H2 = hash:doit(Hash),
     reward_accumulator(Start +1, End, dict:store(H2, 1, DB)).
 
